@@ -636,6 +636,7 @@ public class EDI_Filter implements ActionListener {
 
 				case "PID":
 					try {
+						//size if this segment must be 5. 
 						if (element.length != 6) {
 							message += error.getErrorMessage("846", "PID Size");
 							break;
