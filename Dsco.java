@@ -3,13 +3,17 @@ package ediFilterTutorial;
 import java.io.File;
 import java.util.ArrayList;
 
-public class Dsco {
+public class Dsco extends EDI{
 	Error error = new Error();
 	Printer printer;
+	FileIO fileIO;
+	
 
 	public Dsco(Printer printer) {
 		this.printer = printer;
 	}
+	
+	
 
 	public void dscoErrorCheck(String[] fileData, File selectedFile, String elementSeparator) {
 		// temporary holder for each line of the document
@@ -115,18 +119,11 @@ public class Dsco {
 
 		// Start the loop through the passed transaction data
 		for (int i = 0; i < transactionData.size(); i++) {
-			if (stop != false) {
-				stop = false;
-			}
 			// assign the array element to holder
 			holder = transactionData.get(i);
 			// split holder into the element array. So we can evaluate each segment of the
 			// EDI
 			element = holder.split(elementSeparator);
-			for (int x = 0; x < element.length; x++) {
-				if (stop != false) {
-					break;
-				}
 				switch (element[0]) {
 
 				// Error Checking for the ST segment
@@ -147,7 +144,7 @@ public class Dsco {
 						message += error.getErrorMessage("General", "ST02 empty");
 					}
 					// if it isn't empty store the value in the ST02 in the
-					// transactionSetControlHeader variable for later comparisson
+					// transactionSetControlHeader variable for later comparison
 					else {
 						transactionSetControlHeader += element[2];
 					}
@@ -155,8 +152,7 @@ public class Dsco {
 					errorInformation.add(holder + message);
 					// set message to blank to be ready for the next set of errors
 					message = "";
-					// get out of the loop so we can move on to the next segement in the EDI
-					stop = true;
+					// get out of the loop so we can move on to the next segment in the EDI
 					break;
 
 				// Error Checking of the BIA segment
@@ -538,8 +534,12 @@ public class Dsco {
 					break;
 				}
 			}
-
+		if (getFileWriteFlag()) {
+			setEDIData(errorInformation);
+			
 		}
 		printer.printToForm(errorInformation);
+		}
+		
 	}
-}
+

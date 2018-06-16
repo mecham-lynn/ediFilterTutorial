@@ -11,7 +11,7 @@ import java.time.format.*;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class EDI_Filter implements ActionListener {
+public class EDI_Filter extends EDI implements ActionListener {
 
 	//Creating all of the components of the application
 	JFileChooser fileChooser;
@@ -26,6 +26,7 @@ public class EDI_Filter implements ActionListener {
 	Dsco dsco = new Dsco(printer);
 	Nord nord = new Nord(printer);
 	Kohl kohl = new Kohl(printer);
+	FileIO fileIO = new FileIO(printer);
 
 	//This method is one I found that centers the application window to the bounds of your screen
 	public static void centreWindow(Window frame) {
@@ -160,7 +161,6 @@ public class EDI_Filter implements ActionListener {
 	// Reads the contents of the file and stores it in a string;
 	public String fileReader(File selectedFile) throws IOException {
 		String unFilteredData = "";
-		String line = "";
 		int value = 0;
 		
 		//error check variable
@@ -205,40 +205,47 @@ public class EDI_Filter implements ActionListener {
 		String elementSeparator = "";
 
 		segmentTerminator = String.valueOf(delimeter);
-// if the value in separate is an '*' character we will need to add some escampe characters to the front of it so it will work this is because the regex in the split method uses the * for a different function 
+// if the value in separate is an '*' character we will need to add some escape characters to the front of it so it will work this is because the regex in the split method uses the * for a different function 
 		if (separate == '*') {
 			elementSeparator = "\\*";
 		} else {
 			elementSeparator = String.valueOf(separate);
 		}
 // Splits the toFilter data and assigns it to the segments String array
-		String[] segments = toFilter.split(segmentTerminator);
+		setSegments(toFilter.split(segmentTerminator));
 
 // checks the file-size if the file size is less than 3MB we can print to the form
 		if (selectedFile.length() <= 3000000) {
 			if (isDsco) {
 				// starts the error checking process for Dsco EDI spec (846 basically done, other documents not done)
-				dsco.dscoErrorCheck(segments, selectedFile, elementSeparator);
+				dsco.dscoErrorCheck(getSegments(), selectedFile, elementSeparator);
 			} else if (isNordstrom) {
 				// starts the error checking process for Nordstrom EDI spec (Not Done)
-				nordErrorCheck(segments, selectedFile, elementSeparator);
+				nordErrorCheck(getSegments(), selectedFile, elementSeparator);
 			} else if (isKohls) {
 				// starts the error checking process for Dsco EDI spec (Not Done)
-				kohlErrorCheck(segments, selectedFile, elementSeparator);
+				kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
 			} else {
-				printer.printDataToForm(segments,segmentTerminator);
+				printer.printDataToForm(getSegments(),segmentTerminator);
 
 			}
 // if the size is greater than 3MB we can't print to the form so we print to a file
 		} else {
 			try {
+				boolean flag = true;
+				
+				setFileWriteFlag(flag);
+				
 				//print message to the TextArea
 				printer.printMessageToForm(
 						"The file was too big to process quickly. It is being processed in a seperate file in your Downloads Folder");
+				
 				String fileName = selectedFile.getName() + "_Filtered.txt";
 				
 				//Creates a new file at the destination
-				File newFile = new File(home + "/Downloads/" + fileName);
+				setFileWriteLocation(home + "/Downloads/" + fileName);
+				
+				File newFile = new File(getFileWriteLocation());
 				
 				//checks if the file exists, if it does exist it doesn't write and stops.
 				if (newFile.exists()) {
@@ -246,24 +253,14 @@ public class EDI_Filter implements ActionListener {
 				} else {
 					// this is where the error checking part is going to come in for large files
 					if (isDsco) {
-						dsco.dscoErrorCheck(segments, selectedFile, elementSeparator);
+						dsco.dscoErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else if (isNordstrom) {
-						nordErrorCheck(segments, selectedFile, elementSeparator);
+						nordErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else if (isKohls) {
-						kohlErrorCheck(segments, selectedFile, elementSeparator);
+						kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else {
 						// if there is no error checking involved write the file to the Downloads folder on the machine
-						FileWriter fileWrite = new FileWriter(home + "/Downloads/" + fileName);
-						
-						for (int i = 0; i < segments.length; i++) {
-							if (segments[i] != "" && segments[i] != null) {
-								fileWrite.write(segments[i] + segmentTerminator + "\n");
-							}
-						}
-						//close the writer
-						fileWrite.close();
-						//inform the user that the document was created
-						printer.printMessageToForm("/n The Document" + fileName + " has been created.");
+						FileIO.writeToFile(getSegments());
 					}
 				}
 			} catch (IOException e) {
