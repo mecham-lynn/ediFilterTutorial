@@ -7,6 +7,7 @@ public class Dsco extends EDI{
 	Error error = new Error();
 	Printer printer;
 	FileIO fileIO;
+	//EDI_Filter filter = new EDI_Filter();
 	
 
 	public Dsco(Printer printer) {

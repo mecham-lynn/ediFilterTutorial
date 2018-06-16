@@ -27,6 +27,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 	Nord nord = new Nord(printer);
 	Kohl kohl = new Kohl(printer);
 	FileIO fileIO = new FileIO(printer);
+	EDI edi = new EDI();
 
 	//This method is one I found that centers the application window to the bounds of your screen
 	public static void centreWindow(Window frame) {
@@ -260,10 +261,10 @@ public class EDI_Filter extends EDI implements ActionListener {
 						kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else {
 						// if there is no error checking involved write the file to the Downloads folder on the machine
-						FileIO.writeToFile(getSegments());
+						fileIO.writeToFile(getSegments());
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				printer.logError("/n There was an error writing the file: " + e.getMessage());
 			}
 		}
@@ -299,5 +300,6 @@ public class EDI_Filter extends EDI implements ActionListener {
 				new EDI_Filter();
 			}
 		});
+		
 	}
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class FileIO extends EDI{
 	Printer printer;
+	
+	
 	public FileIO(Printer printer) {
 		this.printer = printer;
 	}
