@@ -9,7 +9,15 @@ public class EDI {
 	private String fileWriteLocation;
 	private String[] segments;
 	private String segmentTerminator;
+	private String transactionType;
 	
+	public String getTransactionType() {
+		return this.transactionType;
+	}
+	
+	public void setTransactionType(String type) {
+		this.transactionType = type;
+	}
 	
 	public String getSegmentTerminator() {
 		return this.segmentTerminator;

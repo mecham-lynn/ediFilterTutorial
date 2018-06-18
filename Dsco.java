@@ -23,8 +23,6 @@ public class Dsco extends EDI{
 
 		boolean go = true;
 
-		// key for the document type will be 846, 855, 810, 870 or 856
-		String transactionType = "";
 
 		// List containing the segment data from ST to SE, which is where the
 		// transactions specific data is
@@ -38,6 +36,9 @@ public class Dsco extends EDI{
 			for (int i = 0; i < fileData.length; i++) {
 					// sets the contents of the array into a String where it can be split later
 					holder = fileData[i];
+					
+					//remove whitespace from beginning and end of the string
+					holder.trim();
 
 					// split the holder string into elements using the elementSeparator variable
 					element = holder.split(elementSeparator);
@@ -56,7 +57,7 @@ public class Dsco extends EDI{
 						}
 						// if the ST01 isn't empty store it in the variable this is what we are going to
 						// Switch on later
-						transactionType = element[1];
+						setTransactionType(element[1]);
 
 						// if any of the 0 position elements are these values add them, but don't filter
 						// them
@@ -71,7 +72,7 @@ public class Dsco extends EDI{
 
 						// take the variable in the transactionType and do a switch based on that value
 						// to error check the correct document
-						switch (transactionType) {
+						switch (getTransactionType()) {
 						case "846":
 							// start the error checking process for the Dsco 846 passing the Array List of
 							// the data and the elementSeparator variable
@@ -110,7 +111,6 @@ public class Dsco extends EDI{
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmmss";
 
-		boolean stop = false;
 		String transactionSetControlHeader = "";
 
 		// this will be the array that contains what we are going to print to the
@@ -125,7 +125,7 @@ public class Dsco extends EDI{
 			// split holder into the element array. So we can evaluate each segment of the
 			// EDI
 			element = holder.split(elementSeparator);
-				switch (element[0]) {
+				switch (element[0].trim()) {
 
 				// Error Checking for the ST segment
 				case "ST":
@@ -187,7 +187,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error Checking of the CUR segment
@@ -207,7 +206,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error Checking of the REF segment
@@ -240,7 +238,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 				// Error checking of the LIN segment
 
@@ -361,7 +358,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 				// Error checking for the PID segment
 
@@ -386,7 +382,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error Checking for the CTP Segment
@@ -409,7 +404,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error check for the QTY segment
@@ -435,7 +429,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error checking for the SCH01 segment
@@ -468,7 +461,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error Checking for the N1 segment
@@ -495,7 +487,6 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 
 				// Error Checking for the SE segment
@@ -524,14 +515,12 @@ public class Dsco extends EDI{
 					}
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 				default:
 					message = "Check this segment: " + element[0]
 							+ " there may be whitespace that the filter isn't catching.";
 					errorInformation.add(holder + message);
 					message = "";
-					stop = true;
 					break;
 				}
 			}
