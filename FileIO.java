@@ -13,6 +13,10 @@ public class FileIO extends EDI{
 		this.printer = printer;
 	}
 	
+	public void fileReader() {
+		
+	}
+	
 	public void writeToFile(String[] data) {
 		try (FileWriter fileWrite = new FileWriter(getFileWriteLocation())){
 		

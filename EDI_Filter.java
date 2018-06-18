@@ -107,15 +107,15 @@ public class EDI_Filter extends EDI implements ActionListener {
 		// start the switch statement using the action command
 		switch (ae.getActionCommand()) {
 		case "selectFile":
-			
+			setDscoRadioStatus(dscoRadio.isSelected());
 			// If radio button is selected get the file and start the error checker for
 			if (dscoRadio.isSelected()) {
 				//try catch block to catch possible errors finding the files
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
-					File selectedFile = fileSelector();
+					fileSelector();
 					//call the formatter method which takes the data from the file object and formats it as well as sending the data to the error checking method
-					formatter(fileReader(selectedFile), selectedFile, true, false, false);
+					formatter(fileReader(getEdiFile()), getEdiFile(), true, false, false);
 				} catch (IOException e) {
 					formattedEDI.append("\n" + e.getMessage());
 					e.printStackTrace();
@@ -124,9 +124,9 @@ public class EDI_Filter extends EDI implements ActionListener {
 			} else {
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
-					File selectedFile = fileSelector();
+					fileSelector();
 					//Runs the formatter method without any error checking
-					formatter(fileReader(selectedFile), selectedFile, false, false, false);
+					formatter(fileReader(getEdiFile()), getEdiFile(), false, false, false);
 
 				} catch (IOException e) {
 
@@ -142,53 +142,42 @@ public class EDI_Filter extends EDI implements ActionListener {
 	}
 
 	// Selects a file based on the users input returns the file object
-	public File fileSelector() {
+	public  void fileSelector() {
 		// stores an int of 1 or 0 when the user selects a file and clicks either Open or Close 
 		int result = fileChooser.showOpenDialog(null);
 		
-		File selectedFile;
 		// if result is a 0 then store the file Object in the selectedFile variable and return it.
 		if (result == JFileChooser.APPROVE_OPTION) {
-			selectedFile = fileChooser.getSelectedFile();
-			return selectedFile;
+			setEdiFile(fileChooser.getSelectedFile());
+			
 			
 			// if a 1 is sent for the result then write the message to the TextArea
 		} else if (result == JFileChooser.CANCEL_OPTION) {
-			formattedEDI.setText("The Cancel Option was selcted");
+			printer.printMessageToForm("The Cancel Option was selcted");
 		}
-		return null;
+		
 	}
 
 	// Reads the contents of the file and stores it in a string;
 	public String fileReader(File selectedFile) throws IOException {
 		String unFilteredData = "";
 		int value = 0;
-		
-		//error check variable
-		String path = selectedFile.getAbsolutePath();
 
 		// instantiates a new fileReader object called unFiltered and uses the absolute path of the file selected earlier in the fileSelector method
 		FileReader unFiltered = new FileReader(selectedFile.getAbsolutePath());
 		
 		// instantiates a new BufferedReader object using the unFiltered FileReader object
 		BufferedReader reader = new BufferedReader(unFiltered);
-
-		// stores each line in the variable line
-		//line = reader.readLine();
 		
-		// while line isn't null append the data into the unFilteredData variable and store a new set of text in the line variable
+		// while the character isn't blank append the data into the unFilteredData variable and store a new set of text in the line variable
 		
 		while((value = reader.read()) != -1) {
 			
+			// assign the int value of the char to value
 			char c = (char)value;
+			//store the converted value into unFilteredData 
 			unFilteredData += String.valueOf(c);
 		}
-		
-		
-//		while (line != null) {
-//			unFilteredData += line;
-//			line = reader.readLine();
-//		}
 		// close the readers
 		reader.close();
 		unFiltered.close();

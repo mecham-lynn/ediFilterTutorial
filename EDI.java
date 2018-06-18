@@ -1,5 +1,6 @@
 package ediFilterTutorial;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class EDI {
@@ -10,6 +11,27 @@ public class EDI {
 	private String[] segments;
 	private String segmentTerminator;
 	private String transactionType;
+	private File ediFile;
+	private boolean dscoRadioStatus;
+	
+	
+	
+	public boolean isDscoRadioStatus() {
+		return dscoRadioStatus;
+	}
+
+	public void setDscoRadioStatus(boolean dscoRadioStatus) {
+		this.dscoRadioStatus = dscoRadioStatus;
+	}
+	
+	public File getEdiFile() {
+		return this.ediFile;
+	}
+	
+	public void setEdiFile(File data) {
+		this.ediFile = data;
+	}
+	
 	
 	public String getTransactionType() {
 		return this.transactionType;
