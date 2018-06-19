@@ -12,11 +12,30 @@ public class EDI {
 	private String segmentTerminator;
 	private String transactionType;
 	private File ediFile;
+	
 	private boolean dscoRadioStatus;
+	private boolean nordRadioStatus;
+	private boolean kohlRadioStatus;
 	
 	
 	
-	public boolean isDscoRadioStatus() {
+	public boolean getNordRadioStatus() {
+		return nordRadioStatus;
+	}
+
+	public void setNordRadioStatus(boolean nordRadioStatus) {
+		this.nordRadioStatus = nordRadioStatus;
+	}
+
+	public boolean getKohlRadioStatus() {
+		return kohlRadioStatus;
+	}
+
+	public void setKohlRadioStatus(boolean kohlRadioStatus) {
+		this.kohlRadioStatus = kohlRadioStatus;
+	}
+
+	public boolean getDscoRadioStatus() {
 		return dscoRadioStatus;
 	}
 

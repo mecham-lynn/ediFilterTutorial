@@ -19,7 +19,7 @@ public class Printer {
 	}
 	
 	public void printMessageToForm(String message) {
-		form.setText(message);
+		form.append(message);
 	}
 	
 	public void printDataToForm(String[] data, String segmentTerminator) {

@@ -108,8 +108,11 @@ public class EDI_Filter extends EDI implements ActionListener {
 		switch (ae.getActionCommand()) {
 		case "selectFile":
 			setDscoRadioStatus(dscoRadio.isSelected());
+			setNordRadioStatus(nordRadio.isSelected());
+			setKohlRadioStatus(kohlRadio.isSelected());
+			
 			// If radio button is selected get the file and start the error checker for
-			if (dscoRadio.isSelected()) {
+			if (getDscoRadioStatus()) {
 				//try catch block to catch possible errors finding the files
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
@@ -117,11 +120,30 @@ public class EDI_Filter extends EDI implements ActionListener {
 					//call the formatter method which takes the data from the file object and formats it as well as sending the data to the error checking method
 					formatter(fileReader(getEdiFile()), getEdiFile(), true, false, false);
 				} catch (IOException e) {
-					formattedEDI.append("\n" + e.getMessage());
+					printer.printMessageToForm("\n" + e.getMessage());
 					e.printStackTrace();
 				}
 				// If no radio button is selected just run the formatter method without any error checking
-			} else {
+			} else if(getNordRadioStatus()) {
+				try {
+					fileSelector();
+					formatter(fileReader(getEdiFile()),getEdiFile(),false, true, false);
+				}catch(IOException e) {
+					printer.printMessageToForm("\n" + e.getMessage());
+					e.printStackTrace();
+				}
+				
+			} else if (getKohlRadioStatus()) {
+				try {
+					fileSelector();
+					formatter(fileReader(getEdiFile()),getEdiFile(),false,false,true);
+				}catch(IOException e) {
+					printer.printMessageToForm("\n" + e.getMessage());
+					e.printStackTrace();
+				}
+				
+			}
+			else {
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
 					fileSelector();
