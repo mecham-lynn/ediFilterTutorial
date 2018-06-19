@@ -112,43 +112,25 @@ public class EDI_Filter extends EDI implements ActionListener {
 			setKohlRadioStatus(kohlRadio.isSelected());
 			
 			// If radio button is selected get the file and start the error checker for
-			if (getDscoRadioStatus()) {
+			if (getDscoRadioStatus() || getNordRadioStatus() || getKohlRadioStatus()) {
 				//try catch block to catch possible errors finding the files
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
 					fileSelector();
 					//call the formatter method which takes the data from the file object and formats it as well as sending the data to the error checking method
-					formatter(fileReader(getEdiFile()), getEdiFile(), true, false, false);
+					formatter(fileIO.fileReader(getEdiFile()));
 				} catch (IOException e) {
 					printer.printMessageToForm("\n" + e.getMessage());
 					e.printStackTrace();
 				}
 				// If no radio button is selected just run the formatter method without any error checking
-			} else if(getNordRadioStatus()) {
-				try {
-					fileSelector();
-					formatter(fileReader(getEdiFile()),getEdiFile(),false, true, false);
-				}catch(IOException e) {
-					printer.printMessageToForm("\n" + e.getMessage());
-					e.printStackTrace();
-				}
-				
-			} else if (getKohlRadioStatus()) {
-				try {
-					fileSelector();
-					formatter(fileReader(getEdiFile()),getEdiFile(),false,false,true);
-				}catch(IOException e) {
-					printer.printMessageToForm("\n" + e.getMessage());
-					e.printStackTrace();
-				}
-				
-			}
+			} 
 			else {
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
 					fileSelector();
 					//Runs the formatter method without any error checking
-					formatter(fileReader(getEdiFile()), getEdiFile(), false, false, false);
+					formatter(fileIO.fileReader(getEdiFile()));
 
 				} catch (IOException e) {
 
@@ -158,7 +140,8 @@ public class EDI_Filter extends EDI implements ActionListener {
 			break;
 			// if the Clear Contents button is pushed set the value inside the TextArea to blank.
 		case "clearContents":
-			formattedEDI.setText("");
+			printer.clearForm();
+			filterGroup.clearSelection();
 			break;
 		}
 	}
@@ -180,38 +163,15 @@ public class EDI_Filter extends EDI implements ActionListener {
 		
 	}
 
-	// Reads the contents of the file and stores it in a string;
-	public String fileReader(File selectedFile) throws IOException {
-		String unFilteredData = "";
-		int value = 0;
+	
 
-		// instantiates a new fileReader object called unFiltered and uses the absolute path of the file selected earlier in the fileSelector method
-		FileReader unFiltered = new FileReader(selectedFile.getAbsolutePath());
-		
-		// instantiates a new BufferedReader object using the unFiltered FileReader object
-		BufferedReader reader = new BufferedReader(unFiltered);
-		
-		// while the character isn't blank append the data into the unFilteredData variable and store a new set of text in the line variable
-		
-		while((value = reader.read()) != -1) {
-			
-			// assign the int value of the char to value
-			char c = (char)value;
-			//store the converted value into unFilteredData 
-			unFilteredData += String.valueOf(c);
-		}
-		// close the readers
-		reader.close();
-		unFiltered.close();
-		// return the populated variable 
-		return unFilteredData;
-	}
-
-	public void formatter(String toFilter, File selectedFile, boolean isDsco, boolean isNordstrom, boolean isKohls) {
+	public void formatter(String toFilter) {
 		char delimeter = toFilter.charAt(105);
 		char separate = toFilter.charAt(103);
 		// Gets the user home folder on the computer and assigns that the the string home
 		String home = System.getProperty("user.home");
+		
+		File selectedFile = getEdiFile();
 
 		String segmentTerminator = "";
 		String elementSeparator = "";
@@ -228,13 +188,13 @@ public class EDI_Filter extends EDI implements ActionListener {
 
 // checks the file-size if the file size is less than 3MB we can print to the form
 		if (selectedFile.length() <= 3000000) {
-			if (isDsco) {
+			if (getDscoRadioStatus()) {
 				// starts the error checking process for Dsco EDI spec (846 basically done, other documents not done)
 				dsco.dscoErrorCheck(getSegments(), selectedFile, elementSeparator);
-			} else if (isNordstrom) {
+			} else if (getNordRadioStatus()) {
 				// starts the error checking process for Nordstrom EDI spec (Not Done)
 				nordErrorCheck(getSegments(), selectedFile, elementSeparator);
-			} else if (isKohls) {
+			} else if (getKohlRadioStatus()) {
 				// starts the error checking process for Dsco EDI spec (Not Done)
 				kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
 			} else {
@@ -264,11 +224,11 @@ public class EDI_Filter extends EDI implements ActionListener {
 					printer.printMessageToForm("The file: " + fileName + " already exists");
 				} else {
 					// this is where the error checking part is going to come in for large files
-					if (isDsco) {
+					if (getDscoRadioStatus()) {
 						dsco.dscoErrorCheck(getSegments(), selectedFile, elementSeparator);
-					} else if (isNordstrom) {
+					} else if (getNordRadioStatus()) {
 						nordErrorCheck(getSegments(), selectedFile, elementSeparator);
-					} else if (isKohls) {
+					} else if (getKohlRadioStatus()) {
 						kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else {
 						// if there is no error checking involved write the file to the Downloads folder on the machine

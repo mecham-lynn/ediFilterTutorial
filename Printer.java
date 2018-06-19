@@ -19,7 +19,7 @@ public class Printer {
 	}
 	
 	public void printMessageToForm(String message) {
-		form.append(message);
+		form.setText(message);
 	}
 	
 	public void printDataToForm(String[] data, String segmentTerminator) {
@@ -28,6 +28,9 @@ public class Printer {
 			//prints the data from the segments array and 
 			form.append(data[i] + segmentTerminator + "\n");
 		}
+	}
+	public void clearForm() {
+		form.setText("");
 	}
 	public void setForm(JTextArea form) {
 		this.form = form;

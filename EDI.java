@@ -3,6 +3,8 @@ package ediFilterTutorial;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JTextArea;
+
 public class EDI {
 
 	private boolean fileWriteFlag;
@@ -12,15 +14,33 @@ public class EDI {
 	private String segmentTerminator;
 	private String transactionType;
 	private File ediFile;
+	private String unfilteredEdi;
 	
 	private boolean dscoRadioStatus;
 	private boolean nordRadioStatus;
 	private boolean kohlRadioStatus;
 	
+//	private JTextArea form;
+//	
+//	public void setForm(JTextArea form) {
+//		this.form = form;
+//	}
+//	public JTextArea getForm() {
+//		return form;
+//	}
+	
+	public String getUnfilteredEDI() {
+		return this.unfilteredEdi;
+	}
+	
+	
+	public void setUnfilteredEDI(String data) {
+		this.unfilteredEdi = data;
+	}
 	
 	
 	public boolean getNordRadioStatus() {
-		return nordRadioStatus;
+		return this.nordRadioStatus;
 	}
 
 	public void setNordRadioStatus(boolean nordRadioStatus) {
@@ -28,7 +48,7 @@ public class EDI {
 	}
 
 	public boolean getKohlRadioStatus() {
-		return kohlRadioStatus;
+		return this.kohlRadioStatus;
 	}
 
 	public void setKohlRadioStatus(boolean kohlRadioStatus) {
@@ -36,7 +56,7 @@ public class EDI {
 	}
 
 	public boolean getDscoRadioStatus() {
-		return dscoRadioStatus;
+		return this.dscoRadioStatus;
 	}
 
 	public void setDscoRadioStatus(boolean dscoRadioStatus) {
@@ -44,7 +64,7 @@ public class EDI {
 	}
 	
 	public File getEdiFile() {
-		return this.ediFile;
+		return ediFile;
 	}
 	
 	public void setEdiFile(File data) {
