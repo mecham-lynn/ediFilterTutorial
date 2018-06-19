@@ -27,6 +27,10 @@ public class Error {
 			return " -- The SE01 must be the same size as the number of lines in the transaction set --";
 		case "SE02 Value":
 			return " -- This value must be the same as the value in ST02 -- ";
+		case "ST Size":
+			return " --ST Segment size is incorrect it should be 2--";
+		case "ST02 Size":
+			return " --ST02 segment is greater than the maximum allowed size (9)--";
 		case "ArrayBoundsError":
 			return "";
 		default:
@@ -36,12 +40,6 @@ public class Error {
 
 	private String InvErrors(String errorParams) {
 		switch (errorParams) {
-
-		// errors for ST segment
-		case "ST Size":
-			return " --ST Segment size is incorrect it should be 2--";
-		case "ST02 Size":
-			return " --ST02 segment is greater than the maximum allowed size (9)--";
 
 		// errors for BIA segment
 		case "BIA01 Value":
