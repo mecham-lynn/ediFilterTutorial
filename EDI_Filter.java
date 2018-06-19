@@ -160,14 +160,8 @@ public class EDI_Filter extends EDI implements ActionListener {
 		} else if (result == JFileChooser.CANCEL_OPTION) {
 			printer.printMessageToForm("The Cancel Option was selcted");
 		}
-<<<<<<< HEAD
-		return null;
 	}
 
-
-=======
-		
-	}
 
 	
 
@@ -246,7 +240,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 			}
 		}
 	}
->>>>>>> origin/LynnWorking
+
 
 //possible class for each spec type?
 	public void nordErrorCheck(String[] fileData, File selectedFile, String elementSeparator) {

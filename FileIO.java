@@ -44,12 +44,27 @@ public class FileIO extends EDI{
 			return getUnfilteredEDI();
 		}
 	
-	public void writeToFile(String[] data) {
+	public void writeToFile(ArrayList<String> arrayList) {
 		try (FileWriter fileWrite = new FileWriter(getFileWriteLocation())){
 		
-		for (int i = 0; i < data.length; i++) {
-			if (data[i] != "" && data != null) {
-				fileWrite.write(data + getSegmentTerminator() + "\n");
+		for (int i = 0; i < arrayList.size(); i++) {
+			if (arrayList.get(i) != "" && arrayList != null) {
+				fileWrite.write(arrayList + getSegmentTerminator() + "\n");
+			}
+		}
+		//inform the user that the document was created
+		printer.printMessageToForm("/n The Document" + getFileWriteLocation() + " has been created.");
+		
+		}catch(IOException io) {
+			io.printStackTrace();
+		}
+	}
+	public void writeToFile(String[] arrayList) {
+		try (FileWriter fileWrite = new FileWriter(getFileWriteLocation())){
+		
+		for (int i = 0; i < arrayList.length; i++) {
+			if (arrayList[i] != "" && arrayList != null) {
+				fileWrite.write(arrayList + getSegmentTerminator() + "\n");
 			}
 		}
 		//inform the user that the document was created

@@ -523,7 +523,7 @@ public class Dsco extends EDI {
 		}
 		if (getFileWriteFlag()) {
 			setEDIData(errorInformation);
-			fileIO.writeCheckedToFile(getEDIData());
+			fileIO.writeToFile(getEDIData());
 
 		}
 		printer.printToForm(errorInformation);
