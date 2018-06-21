@@ -3,14 +3,65 @@ package ediFilterTutorial;
 public class Error {
 
 	public String getErrorMessage(String transactionType, String errorParams) {
-		if (transactionType.equals("846")) {
+		switch (transactionType) {
+		case "846":
 			return InvErrors(errorParams);
-		} else if (transactionType.equals("General")) {
+		case "856":
+			return ShipErrors(errorParams);
+		case "General":
 			return GenErrors(errorParams);
+			default:
+				return "";
 		}
-		return "";
 	}
 
+	private String ShipErrors(String errorParams) {
+		switch (errorParams) {
+		case "BSN01 Value":
+			return " --BSN01 must be equal to '00' --";
+		case "BSN02":
+			return "--BSN02 cannot be empty --";
+		case "BSN03 Format":
+			return "-- the date format for BSN03 must be equal to CCYYMMDD --";
+		case "BSN04 Format":
+			return "-- The time format for BSN04 must match HHMM --";
+		case "BSN05 Value":
+			return "-- BSN05 must equal '004' --";
+		case "BSN Size":
+			return "-- The BSN segment length is incorrect it must be 5 elments long --";
+		case "BSN Segments Empty":
+			return "-- One or more elements are empty. All elements in the BSN are required and cannot be empty--";
+		case "HL Size":
+			return "-- The HL segment length is incorrect it must be 3 elements long --";
+		case "HL Empty":
+			return "-- One or more elements are empty. All elements in the HL are required and cannot be empty --";
+		case "HL03 Value":
+			return "-- The HL03 is incorrect it must be one of the following: 'O', 'I', or 'S' --";
+		case "TD5 Size":
+			return "-- The TD5 segment length is incorrect it must be 8 elements long -- ";
+		case "TDF Segments Empty":
+			return "-- One or more elements are empty. All elements except TD506 in the TD5 are required and cannot be empty --";
+		case "TD501 Value":
+			return "-- The value in the TD501 element is incorrect, it should be 'Z' --";
+		case "TD502 Value":
+			return "-- The value in the TD502 element is incorrect, it should be 'ZZ' --";
+		case "TD504 Value":
+			return "-- The value in the TD504 element is incorrect, it should be 'ZZ' --";
+		case "TD507 Value":
+			return "-- The value in the TD507 element is incorrect, it should be 'ZZ' --";
+		case "REF Size":
+			return "--The REF segment length is incorrect it must be 2 or 3 elements long -- ";
+		case "REF01 Value":
+			return "-- The REF01 is incorrect it mus equal one of the following values: 'ZZ', 'IA', 'CO', 'VN' or 'CN' --";
+		case "REF01 Empty":
+			return "-- The REF01 cannot be empty --";
+		case "REF02 Empty":
+			return "-- The REF02 cannot be empty --";
+		default:
+			return "";
+		}
+	}
+	
 	private String GenErrors(String errorParams) {
 		switch (errorParams) {
 

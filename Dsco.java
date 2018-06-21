@@ -70,6 +70,7 @@ public class Dsco extends EDI {
 						// start the error checking process for the Dsco 846 passing the Array List of
 						// the data and the elementSeparator variable
 						dsco846(transactionData, elementSeparator);
+						break;
 					case "856":
 						System.out.println(transactionData);
 						// formattedEDI.append("\n You got to the 856 Switch statement");
@@ -265,7 +266,7 @@ public class Dsco extends EDI {
 							if (!element[4].equals("UP")) {
 								message += error.getErrorMessage("846", "LIN04 Value");
 							}
-							// UPCs have to be either 8 or 12 digits long. They cannot be anything else
+							// UPCs have to be either 6 or 12 digits long. They cannot be anything else
 							// (most common error I see with EDI)
 							if (element[5].length() != 12 && element[5].length() != 8) {
 								message += error.getErrorMessage("846", "LIN05 Size");
@@ -523,7 +524,7 @@ public class Dsco extends EDI {
 		}
 		if (getFileWriteFlag()) {
 			setEDIData(errorInformation);
-			fileIO.writeCheckedToFile(getEDIData());
+			// fileIO.writeCheckedToFile(getEDIData());
 
 		}
 		printer.printToForm(errorInformation);
@@ -534,7 +535,7 @@ public class Dsco extends EDI {
 		String[] element;
 		String message = "";
 		String dateFormat = "yyyyMMdd";
-		String timeFormat = "HHmmss";
+		String timeFormat = "HHmm";
 
 		String transactionSetControlHeader = "";
 
@@ -581,20 +582,31 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "BSN":
-				if(!element[1].equals("00")) {
-					message += error.getErrorMessage(getTransactionType(), "BSN01 Value");
-				}
-				if (element[2].isEmpty()) {
-					message += error.getErrorMessage(getTransactionType(), "BSN02 Empty");
-				}
-				if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
-					message += error.getErrorMessage(getTransactionType(), "BSN03 Format");
-				}
-				if (!EDI_Filter.dateChecker(element[4], timeFormat)) {
-					message += error.getErrorMessage(getTransactionType(), "BSN04 Format");
-				}
-				if (!element[5].equals("0004")) {
-					message += error.getErrorMessage(getTransactionType(), "BSN05 Value");
+				try {
+					if (element.length != 6) {
+						message += error.getErrorMessage(getTransactionType(), "BSN Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty() || element[4].isEmpty()
+							|| element[5].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "BSN Segments Empty");
+					}
+					if (!element[1].equals("00")) {
+						message += error.getErrorMessage(getTransactionType(), "BSN01 Value");
+					}
+					if (element[2].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "BSN02 Empty");
+					}
+					if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
+						message += error.getErrorMessage(getTransactionType(), "BSN03 Format");
+					}
+					if (!EDI_Filter.dateChecker(element[4], timeFormat)) {
+						message += error.getErrorMessage(getTransactionType(), "BSN04 Format");
+					}
+					if (!element[5].equals("0004")) {
+						message += error.getErrorMessage(getTransactionType(), "BSN05 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
 				// add the data with any errors to the errorInformation ArrayList
 				errorInformation.add(holder + message);
@@ -603,14 +615,176 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "HL":
+				try {
+					if (element.length != 4) {
+						error.getErrorMessage(getTransactionType(), "HL Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "HL Empty");
+					}
+					if (!element[3].equals("O") && !element[3].equals("I") && !element[3].equals("S")) {
+						error.getErrorMessage(getTransactionType(), "HL03 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "TD5":
+				try {
+					if (element.length != 9) {
+						error.getErrorMessage(getTransactionType(), "TD5 Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty() || element[4].isEmpty()
+							|| element[5].isEmpty() || element[7].isEmpty() || element[8].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "TD5 Segments Empty");
+					}
+					if (!element[1].equals("Z")) {
+						error.getErrorMessage(getTransactionType(), "TD501 Value");
+					}
+					if (!element[2].equals("ZZ")) {
+						error.getErrorMessage(getTransactionType(), "TD502 Value");
+					}
+					if (!element[4].equals("ZZ")) {
+						error.getErrorMessage(getTransactionType(), "TD504 Value");
+					}
+					if (!element[7].equals("ZZ")) {
+						error.getErrorMessage(getTransactionType(), "TD507 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "REF":
+				try {
+					if (element.length < 3 || element.length > 4) {
+						error.getErrorMessage(getTransactionType(), "REF Size");
+					}
+					if (!element[1].equals("IA") && !element[1].equals("CN") && !element[1].equals("CO")
+							&& !element[1].equals("VN") && !element[1].equals("ZZ")) {
+						error.getErrorMessage(getTransactionType(), "REF01 Value");
+					}
+					if (element[1].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "REF01 Empty");
+					}
+					if (!element[1].isEmpty()) {
+						if (element[2].isEmpty()) {
+							error.getErrorMessage(getTransactionType(), "REF02 Empty");
+						}
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "LIN":
+				try {
+					if (element[2].isEmpty() || element[3].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "LIN Empty");
+					}
+					if (!element[2].equals("SK")) {
+						error.getErrorMessage(getTransactionType(), "LIN02 Value");
+					}
+					if (element[3].length() > 70) {
+						error.getErrorMessage(getTransactionType(), "LIN03 Char Limit");
+					}
+					if (element.length < 4 || element.length > 18) {
+						error.getErrorMessage(getTransactionType(), "LIN Size");
+					}
+					if (element.length >= 6) {
+						if (!element[4].isEmpty()) {
+							// LIN04 has to be "UP"
+							if (!element[4].equals("UP")) {
+								message += error.getErrorMessage("846", "LIN04 Value");
+							}
+							// UPCs have to be either 6 or 12 digits long. They cannot be anything else
+							// (most common error I see with EDI)
+							if (element[5].length() != 12 && element[5].length() != 8) {
+								message += error.getErrorMessage("846", "LIN05 Size");
+							} // LIN05 can't be empty when LIN04 has data
+							if (element[5].isEmpty()) {
+								message = message + error.getErrorMessage("846", "LIN05 Empty");
+							}
+						}
+					}
+					if (element.length >= 7) {
+						if (!element[6].equals("EN")) {
+							message += error.getErrorMessage("846", "LIN06 Value");
+						}
+						if (!element[6].isEmpty()) {
+							if (element[7].isEmpty()) {
+								message += error.getErrorMessage("846", "LIN07 Empty");
+							} else {
+								// EAN's can only have 13 digits. No more no less.
+								if (element[7].length() != 13) {
+									message += error.getErrorMessage("846", "LIN07 Size");
+								}
+							}
+						}
+					}
+					if (element.length >= 9) {
+						if (!element[8].isEmpty()) {
+							if (!element[8].equals("MG")) {
+								message += error.getErrorMessage("846", "LIN08 Value");
+							}
+							if (element[9].isEmpty()) {
+								message += error.getErrorMessage("846", "LIN09 Empty");
+							}
+
+						}
+					}
+					if (element.length >= 11) {
+						if (!element[10].isEmpty()) {
+							if (!element[10].equals("IB")) {
+								message += error.getErrorMessage("846", "LIN10 Value");
+							} else if (element[11].isEmpty()) {
+								message += error.getErrorMessage("846", "LIN11 Empty");
+							}
+						}
+					}
+					if (element.length >= 13) {
+						if (!element[12].isEmpty()) {
+							if (!element[12].equals("UK")) {
+								message += error.getErrorMessage("846", "LIN12 Value");
+							}
+							if (element[13].isEmpty()) {
+								message += error.getErrorMessage("846", "LIN13 Empty");
+							}
+						}
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "SN1":
+				if(!element[1].isEmpty()) {
+					error.getErrorMessage(getTransactionType(), "SN101 Value");
+				}if (element[2].isEmpty() || element[3].isEmpty()) {
+					error.getErrorMessage(getTransactionType(), "SN1 Empty");
+				}if (!element[3].isEmpty()) {
+					if(element[3].equals("EA")) {
+					error.getErrorMessage(getTransactionType(), "SN103 Value");
+					}
+				}
 				break;
 			case "SE":
 				break;
