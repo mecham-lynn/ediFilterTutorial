@@ -691,6 +691,34 @@ public class Dsco extends EDI {
 				message = "";
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
+			case "DTM":
+				try {
+					if (element.length != 4) {
+						message += error.getErrorMessage(getTransactionType(), "DTM Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "DTM Empty");
+					} else {
+						if (!element[1].equals("011")) {
+							message += error.getErrorMessage(getTransactionType(), "DTM01 Value");
+						}
+						if (!EDI_Filter.dateChecker(element[2], dateFormat)) {
+							message += error.getErrorMessage(getTransactionType(), "DTM02 Format");
+						}
+						if (!EDI_Filter.dateChecker(element[3], timeFormat)) {
+							message += error.getErrorMessage(getTransactionType(), "DTM03 Format");
+						}
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
 			case "LIN":
 				try {
 					if (element[2].isEmpty() || element[3].isEmpty()) {
@@ -776,18 +804,89 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "SN1":
-				if(!element[1].isEmpty()) {
-					error.getErrorMessage(getTransactionType(), "SN101 Value");
-				}if (element[2].isEmpty() || element[3].isEmpty()) {
-					error.getErrorMessage(getTransactionType(), "SN1 Empty");
-				}if (!element[3].isEmpty()) {
-					if(element[3].equals("EA")) {
-					error.getErrorMessage(getTransactionType(), "SN103 Value");
+				try {
+					if (!element[1].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "SN101 Value");
 					}
+					if (element[2].isEmpty() || element[3].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "SN1 Empty");
+					}
+					if (!element[3].isEmpty()) {
+						if (element[3].equals("EA")) {
+							error.getErrorMessage(getTransactionType(), "SN103 Value");
+						}
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+			case "SAC":
+				try {
+					if (element.length != 6) {
+						message += error.getErrorMessage(getTransactionType(), "SAC Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[5].isEmpty()) {
+						error.getErrorMessage(getTransactionType(), "SAC Empty");
+					}
+					if (!element[1].equals("C")) {
+						message += error.getErrorMessage(getTransactionType(), "SAC01 Value");
+					}
+					if (!element[2].equals("G821")) {
+						message += error.getErrorMessage(getTransactionType(), "SAC02 Value");
+					}
+					if (!element[5].matches("\\d*\\.?\\d+")) {
+						message += error.getErrorMessage(getTransactionType(), "SAC05 Decimal");
+					}
+					if (!element[3].isEmpty() || !element[4].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "SAC04 Value");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "SE":
+				try {
+					int result;
+					String count = "";
+					count += element[1];
+					result = Integer.parseInt(count);
+					if (element.length != 3) {
+						message += error.getErrorMessage("General", "SE Size");
+					}
+					if (element[1].isEmpty()) {
+						message += error.getErrorMessage("General", "SE01 Empty");
+						break;
+					}
+					if (result != transactionData.size()) {
+						message += error.getErrorMessage("General", "SE01 Value");
+					}
+					if (!element[2].equals(transactionSetControlHeader)) {
+						message += error.getErrorMessage("General", "SE02 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
 				break;
+			default:
+				message = "Check this segment: " + element[0]
+						+ " there may be whitespace that the filter isn't catching.";
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
 			}
 		}
 	}

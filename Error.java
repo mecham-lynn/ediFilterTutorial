@@ -57,6 +57,36 @@ public class Error {
 			return "-- The REF01 cannot be empty --";
 		case "REF02 Empty":
 			return "-- The REF02 cannot be empty --";
+		case "LIN02 Empty":
+			return "-- The LIN02 and LIN03 elements are required and cannot be empty --";
+		case "SN101 Value":
+			return "-- The SN101 can only be empty --";
+		case "SN1 Empty":
+			return "-- The SN102 or SN103 elements can't be empty --";
+		case "SN103 Value":
+			return "-- The SN103 element value is incorrect it must equal 'EA' --";
+		case "DTM Size":
+			return "-- The DTM segment length is incorrect it must be 3 elements long --";
+		case "DTM Empty":
+			return "-- The DTM segment is required and none of the elements can be empty --";
+		case "DTM01 Value":
+			return "-- The DTM01 value is incorrect it must equal '011' --";
+		case "DTM02 Format":
+			return "-- The DTM02 value doesn't match teh Date format of CCYYMMDD (YYYYMMDD) --";
+		case "DTM03 Format":
+			return "-- The DTOM03 Value doesn't match the Time format of HHMM --";
+		case "SAC Size":
+			return "-- The SAC segment length is incorrect it must be 5 elements long --";
+		case "SAC Empty":
+			return "-- The elements SAC01, SAC02, SAC05 cannot be empty when the SAC segment is provided --";
+		case "SAC01 Value":
+			return "-- The SAC01 value is incorrect it must be 'C' --";
+		case "SAC02 Value":
+			return "-- The SAC02 Value is incorrect it must be 'G821' --";
+		case "SAC05 Decimal":
+			return "-- The SAC05 Value has a decimal missing, the decimal is required --";
+		case "SAC04 Value":
+			return "-- The SAC03 and SAC04 values must be empty and cannot be populated --";
 		default:
 			return "";
 		}
