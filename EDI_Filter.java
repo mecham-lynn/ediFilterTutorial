@@ -158,7 +158,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 			
 			// if a 1 is sent for the result then write the message to the TextArea
 		} else if (result == JFileChooser.CANCEL_OPTION) {
-			printer.printMessageToForm("The Cancel Option was selcted");
+			printer.printMessageToForm("The Cancel Option was selected");
 		}
 		
 	}
@@ -183,6 +183,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 		} else {
 			elementSeparator = String.valueOf(separate);
 		}
+		
 // Splits the toFilter data and assigns it to the segments String array
 		setSegments(toFilter.split(segmentTerminator));
 

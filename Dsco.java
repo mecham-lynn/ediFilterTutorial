@@ -32,12 +32,12 @@ public class Dsco extends EDI {
 			for (int i = 0; i < fileData.length; i++) {
 				// sets the contents of the array into a String where it can be split later
 				holder = fileData[i];
-
 				// split the holder string into elements using the elementSeparator variable
 				element = holder.split(elementSeparator);
+				
+				element[0] = element[0].trim();
 
-				// filter through the element looking at position 0
-				//
+
 				if (element[0].equals("ST")) {
 					transactionData.add(fileData[i]);
 					if (element[1].isEmpty()) {
@@ -547,14 +547,18 @@ public class Dsco extends EDI {
 		for (int i = 0; i < transactionData.size(); i++) {
 			// assign the array element to holder
 			holder = transactionData.get(i);
-
+			holder = holder.trim();
 			// remove whitespace from beginning and end of the string
-			holder.trim();
+			
 
 			// split holder into the element array. So we can evaluate each segment of the
 			// EDI
 			element = holder.split(elementSeparator);
-			switch (element[0].trim()) {
+			//element[0] = element[0].trim();
+//			if(elementSeparator != "/n") {
+//				element[0] = element[0].replaceAll("/n", "");
+//			}
+			switch (element[0]) {
 			case "ST":
 				if (element.length != 3) {
 					message += error.getErrorMessage("General", "ST Size");
@@ -574,6 +578,23 @@ public class Dsco extends EDI {
 				// transactionSetControlHeader variable for later comparison
 				else {
 					transactionSetControlHeader += element[2];
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+			case "CUR":
+				if (element.length != 3) {
+					error.getErrorMessage(getTransactionType(), "CUR Size");
+				}
+				if(!element[1].isEmpty() && !element[2].isEmpty()) {
+					if(!element[1].equals("BY")) {
+						error.getErrorMessage(getTransactionType(), "CUR01 Value");
+					}if (!element[2].equals("USD")) {
+						error.getErrorMessage(getTransactionType(), "CUR02 Value");
+					}
 				}
 				// add the data with any errors to the errorInformation ArrayList
 				errorInformation.add(holder + message);
@@ -803,6 +824,13 @@ public class Dsco extends EDI {
 				message = "";
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
+			case "PRF":
+				if(element.length != 2) {
+					error.getErrorMessage(getTransactionType(), "PRF Size");
+				}
+				if(element[1].isEmpty()) {
+					error.getErrorMessage(getTransactionType(), "PRF01 Empty");
+				}
 			case "SN1":
 				try {
 					if (!element[1].isEmpty()) {
@@ -889,6 +917,7 @@ public class Dsco extends EDI {
 
 			}
 		}
+		printer.printToForm(errorInformation);
 	}
 
 }

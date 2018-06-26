@@ -31,6 +31,12 @@ public class Error {
 			return "-- The BSN segment length is incorrect it must be 5 elments long --";
 		case "BSN Segments Empty":
 			return "-- One or more elements are empty. All elements in the BSN are required and cannot be empty--";
+		case "CUR Size":
+			return "-- The CUR segment length is incorrect it must be 3 elements long --";
+		case "CUR01 Value":
+			return "-- The CUR01 segment must have 'BY' as its value --";
+		case "CUR02 Value":
+			return "-- The CUR02 segment must have 'USD' as its value --";
 		case "HL Size":
 			return "-- The HL segment length is incorrect it must be 3 elements long --";
 		case "HL Empty":
@@ -87,6 +93,11 @@ public class Error {
 			return "-- The SAC05 Value has a decimal missing, the decimal is required --";
 		case "SAC04 Value":
 			return "-- The SAC03 and SAC04 values must be empty and cannot be populated --";
+		case "PRF Size":
+			return "-- The segment length of the PRF value is incorrect it should be 1 element long --";
+		case "PRF01 Empty":
+			return "-- The PRF01 segment is empty, the PRF01 segment is a required segment and cannot be missing --"; 
+		
 		default:
 			return "";
 		}
