@@ -2,6 +2,9 @@ package ediFilterTutorial;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Dsco extends EDI {
 	Error error = new Error();
@@ -104,6 +107,9 @@ public class Dsco extends EDI {
 		String message = "";
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmmss";
+        createFieldsDsco846();
+		
+		HashMap<String, Boolean> fields = getRequiredFields();
 
 		String transactionSetControlHeader = "";
 
@@ -127,6 +133,7 @@ public class Dsco extends EDI {
 
 			// Error Checking for the ST segment
 			case "ST":
+				fields.put("ST", true);
 				// checking the length of the array
 				if (element.length != 3) {
 					message += error.getErrorMessage("General", "ST Size");
@@ -161,6 +168,7 @@ public class Dsco extends EDI {
 				// sometimes we run into a segment that isn't as long as it should be
 				// which means that the elements array is shorter than expected.
 				try {
+					fields.put("BIA", true);
 					// most of the logic for the rest of the method is specific to the 846 spec.
 					if (!element[1].equals("00")) {
 						message += error.getErrorMessage("846", "BIA01 Value");
@@ -243,6 +251,7 @@ public class Dsco extends EDI {
 			// updated.
 			case "LIN":
 				try {
+					fields.put("LIN", true);
 					// Check the length for the max and min values
 					if (element.length > 32 || element.length < 4) {
 						message += error.getErrorMessage("846", "LIN Size");
@@ -407,6 +416,7 @@ public class Dsco extends EDI {
 			// Error check for the QTY segment
 			case "QTY":
 				try {
+					fields.put("QTY", true);
 					if (element.length != 4) {
 						message += error.getErrorMessage("846", "QTY Size");
 					}
@@ -491,6 +501,7 @@ public class Dsco extends EDI {
 
 			case "SE":
 				try {
+					fields.put("SE", true);
 					int result;
 					String count = "";
 					count += element[1];
@@ -528,14 +539,18 @@ public class Dsco extends EDI {
 
 		}
 		printer.printToForm(errorInformation);
+		printer.printMessageToForm(error.evaluateReqFields(fields));
 	}
 
-	public void dsco856(ArrayList<String> transactionData, String elementSeparator) {
+	private void dsco856(ArrayList<String> transactionData, String elementSeparator) {
 		String holder = "";
 		String[] element;
 		String message = "";
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmm";
+		createFieldsDsco856();
+		
+		HashMap<String, Boolean> fields = getRequiredFields();
 
 		String transactionSetControlHeader = "";
 
@@ -560,6 +575,7 @@ public class Dsco extends EDI {
 //			}
 			switch (element[0]) {
 			case "ST":
+				fields.put("ST", true);
 				if (element.length != 3) {
 					message += error.getErrorMessage("General", "ST Size");
 					break;
@@ -603,6 +619,7 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "BSN":
+				fields.put("BSN", true);
 				try {
 					if (element.length != 6) {
 						message += error.getErrorMessage(getTransactionType(), "BSN Size");
@@ -637,6 +654,7 @@ public class Dsco extends EDI {
 				break;
 			case "HL":
 				try {
+					fields.put("HL", true);
 					if (element.length != 4) {
 						error.getErrorMessage(getTransactionType(), "HL Size");
 					}
@@ -657,6 +675,7 @@ public class Dsco extends EDI {
 				break;
 			case "TD5":
 				try {
+					fields.put("TD5", true);
 					if (element.length != 9) {
 						error.getErrorMessage(getTransactionType(), "TD5 Size");
 					}
@@ -688,6 +707,8 @@ public class Dsco extends EDI {
 				break;
 			case "REF":
 				try {
+					fields.put("REF", true);
+					
 					if (element.length < 3 || element.length > 4) {
 						error.getErrorMessage(getTransactionType(), "REF Size");
 					}
@@ -714,6 +735,7 @@ public class Dsco extends EDI {
 				break;
 			case "DTM":
 				try {
+					fields.put("DTM", true);
 					if (element.length != 4) {
 						message += error.getErrorMessage(getTransactionType(), "DTM Size");
 					}
@@ -742,6 +764,7 @@ public class Dsco extends EDI {
 				break;
 			case "LIN":
 				try {
+					fields.put("LIN", true);
 					if (element[2].isEmpty() || element[3].isEmpty()) {
 						error.getErrorMessage(getTransactionType(), "LIN Empty");
 					}
@@ -825,6 +848,7 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "PRF":
+				fields.put("PRF", true);
 				if(element.length != 2) {
 					error.getErrorMessage(getTransactionType(), "PRF Size");
 				}
@@ -832,6 +856,7 @@ public class Dsco extends EDI {
 					error.getErrorMessage(getTransactionType(), "PRF01 Empty");
 				}
 			case "SN1":
+				fields.put("SN1", true);
 				try {
 					if (!element[1].isEmpty()) {
 						error.getErrorMessage(getTransactionType(), "SN101 Value");
@@ -885,6 +910,7 @@ public class Dsco extends EDI {
 				break;
 			case "SE":
 				try {
+					fields.put("SE", true);
 					int result;
 					String count = "";
 					count += element[1];
@@ -918,6 +944,8 @@ public class Dsco extends EDI {
 			}
 		}
 		printer.printToForm(errorInformation);
+		printer.printMessageToForm(error.evaluateReqFields(fields));
 	}
+
 
 }

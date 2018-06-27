@@ -1,5 +1,9 @@
 package ediFilterTutorial;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class Error {
 
 	public String getErrorMessage(String transactionType, String errorParams) {
@@ -13,6 +17,20 @@ public class Error {
 			default:
 				return "";
 		}
+	}
+	
+	public String evaluateReqFields(HashMap<String, Boolean> reqFields) {
+		String Message = "";
+		Iterator<Map.Entry<String, Boolean>> entries = reqFields.entrySet().iterator();
+		while(entries.hasNext()) {
+			Map.Entry<String, Boolean> entry = entries.next();
+			if(entry.getValue() == false) {
+				Message += "Required Segment " + entry.getKey() + " was not provided.";
+			}
+		}
+		return Message;
+		
+		
 	}
 
 	private String ShipErrors(String errorParams) {

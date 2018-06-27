@@ -2,6 +2,8 @@ package ediFilterTutorial;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JTextArea;
 
@@ -28,6 +30,46 @@ public class EDI {
 //	public JTextArea getForm() {
 //		return form;
 //	}
+	
+	private HashMap<String, Boolean> requiredFields = new HashMap<String, Boolean>();
+	
+	
+	private HashMap<String, Boolean> Dsco856 = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> Dsco846 = new HashMap<String, Boolean>();
+	
+	public void createFieldsDsco856() {
+		Dsco856.put("ST", false);
+		Dsco856.put("BSN", false);
+		Dsco856.put("HL", false);
+		Dsco856.put("TD5", false);
+		Dsco856.put("REF", false);
+		Dsco856.put("DTM", false);
+		Dsco856.put("LIN", false);
+		Dsco856.put("SN1", false);
+		Dsco856.put("PRF", false);
+		Dsco856.put("SE", false);
+		
+		setRequiredFields(Dsco856);
+	}
+	
+	public void createFieldsDsco846() {
+		
+		Dsco846.put("ST", false);
+		Dsco846.put("BIA", false);
+		Dsco846.put("LIN", false);
+		Dsco846.put("QTY", false);
+		Dsco846.put("SE", false);
+		
+		setRequiredFields(Dsco846);
+	}
+	
+	public void setRequiredFields(HashMap<String, Boolean> data) {
+		this.requiredFields = data;
+	}
+	
+	public HashMap<String, Boolean> getRequiredFields(){
+		return this.requiredFields;
+	}
 	
 	public String getUnfilteredEDI() {
 		return this.unfilteredEdi;
