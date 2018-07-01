@@ -12,6 +12,8 @@ public class Error {
 			return InvErrors(errorParams);
 		case "856":
 			return ShipErrors(errorParams);
+		case "810":
+			return InvoiceErrors(errorParams);
 		case "General":
 			return GenErrors(errorParams);
 			default:
@@ -19,6 +21,15 @@ public class Error {
 		}
 	}
 	
+	private String InvoiceErrors(String errorParams) {
+		switch(errorParams) {
+		case "BIG Size":
+			return "-- The length of this segment is incorrect it should be 5 elements long--";
+			
+		}
+		return null;
+	}
+
 	public String evaluateReqFields(HashMap<String, Boolean> reqFields) {
 		String Message = "";
 		Iterator<Map.Entry<String, Boolean>> entries = reqFields.entrySet().iterator();

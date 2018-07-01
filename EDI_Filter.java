@@ -142,6 +142,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 		case "clearContents":
 			printer.clearForm();
 			filterGroup.clearSelection();
+			//clearEDIData();
 			break;
 		}
 	}

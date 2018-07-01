@@ -11,6 +11,7 @@ public class Dsco extends EDI {
 	Printer printer;
 	FileIO fileIO;
 	// EDI_Filter filter = new EDI_Filter();
+	ArrayList<String> errorInformation = new ArrayList<String>();
 
 	public Dsco(Printer printer) {
 		this.printer = printer;
@@ -37,9 +38,8 @@ public class Dsco extends EDI {
 				holder = fileData[i];
 				// split the holder string into elements using the elementSeparator variable
 				element = holder.split(elementSeparator);
-				
-				element[0] = element[0].trim();
 
+				element[0] = element[0].trim();
 
 				if (element[0].equals("ST")) {
 					transactionData.add(fileData[i]);
@@ -57,13 +57,14 @@ public class Dsco extends EDI {
 
 					// if any of the 0 position elements are these values add them, but don't filter
 					// them
-				} else if (element[0].equals("ISA") || element[0].equals("GS") || element[0].equals("GE")
-						|| element[0].equals("IEA")) {
+				}
+				if (element[0].equals("ISA") || element[0].equals("GS") || element[0].equals("GE")) {
 					documentHeaderData.add(fileData[i]);
 					// if the 0 element is "SE" that is the end of the transaction and the data in
 					// the transactionData array list is what we are going to do the bulk of the
 					// error checking
-				} else if (element[0].equals("SE")) {
+				}
+				if (element[0].equals("SE")) {
 					transactionData.add(fileData[i]);
 
 					// take the variable in the transactionType and do a switch based on that value
@@ -75,7 +76,7 @@ public class Dsco extends EDI {
 						dsco846(transactionData, elementSeparator);
 						break;
 					case "856":
-						System.out.println(transactionData);
+						// System.out.println(transactionData);
 						// formattedEDI.append("\n You got to the 856 Switch statement");
 						dsco856(transactionData, elementSeparator);
 						break;
@@ -90,9 +91,20 @@ public class Dsco extends EDI {
 						// dsco810(transactionData);
 						break;
 					}
+					// break;
+
+				}
+				if (element[0].equals("IEA")) {
+					documentHeaderData.add(fileData[i]);
+					// setEDIData(errorInformation);
+
+					printer.printToForm(errorInformation);
+					errorInformation.clear();
 					go = false;
 					break;
-				} else {
+				}
+				if (!element[0].equals("ST") && !element[0].equals("SE") && !element[0].equals("ISA")
+						&& !element[0].equals("GS") && !element[0].equals("GE") && !element[0].equals("IEA")) {
 					// formattedEDI.setText(element[0]);
 					transactionData.add(fileData[i]);
 				}
@@ -107,16 +119,11 @@ public class Dsco extends EDI {
 		String message = "";
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmmss";
-        createFieldsDsco846();
-		
+		createFieldsDsco846();
+
 		HashMap<String, Boolean> fields = getRequiredFields();
 
 		String transactionSetControlHeader = "";
-
-		// this will be the array that contains what we are going to print to the
-		// field--- had to do it this way because the error messages weren't getting
-		// added to the original ArrayList
-		ArrayList<String> errorInformation = new ArrayList<String>();
 
 		// Start the loop through the passed transaction data
 		for (int i = 0; i < transactionData.size(); i++) {
@@ -538,8 +545,8 @@ public class Dsco extends EDI {
 			// fileIO.writeCheckedToFile(getEDIData());
 
 		}
-		printer.printToForm(errorInformation);
-		printer.printMessageToForm(error.evaluateReqFields(fields));
+		// printer.printToForm(errorInformation);
+		errorInformation.add(error.evaluateReqFields(fields));
 	}
 
 	private void dsco856(ArrayList<String> transactionData, String elementSeparator) {
@@ -549,7 +556,7 @@ public class Dsco extends EDI {
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmm";
 		createFieldsDsco856();
-		
+
 		HashMap<String, Boolean> fields = getRequiredFields();
 
 		String transactionSetControlHeader = "";
@@ -557,22 +564,22 @@ public class Dsco extends EDI {
 		// this will be the array that contains what we are going to print to the
 		// field--- had to do it this way because the error messages weren't getting
 		// added to the original ArrayList
-		ArrayList<String> errorInformation = new ArrayList<String>();
+
+		// ArrayList<String> errorInformation = new ArrayList<String>();
 
 		for (int i = 0; i < transactionData.size(); i++) {
 			// assign the array element to holder
 			holder = transactionData.get(i);
 			holder = holder.trim();
 			// remove whitespace from beginning and end of the string
-			
 
 			// split holder into the element array. So we can evaluate each segment of the
 			// EDI
 			element = holder.split(elementSeparator);
-			//element[0] = element[0].trim();
-//			if(elementSeparator != "/n") {
-//				element[0] = element[0].replaceAll("/n", "");
-//			}
+			// element[0] = element[0].trim();
+			// if(elementSeparator != "/n") {
+			// element[0] = element[0].replaceAll("/n", "");
+			// }
 			switch (element[0]) {
 			case "ST":
 				fields.put("ST", true);
@@ -605,10 +612,11 @@ public class Dsco extends EDI {
 				if (element.length != 3) {
 					error.getErrorMessage(getTransactionType(), "CUR Size");
 				}
-				if(!element[1].isEmpty() && !element[2].isEmpty()) {
-					if(!element[1].equals("BY")) {
+				if (!element[1].isEmpty() && !element[2].isEmpty()) {
+					if (!element[1].equals("BY")) {
 						error.getErrorMessage(getTransactionType(), "CUR01 Value");
-					}if (!element[2].equals("USD")) {
+					}
+					if (!element[2].equals("USD")) {
 						error.getErrorMessage(getTransactionType(), "CUR02 Value");
 					}
 				}
@@ -708,7 +716,7 @@ public class Dsco extends EDI {
 			case "REF":
 				try {
 					fields.put("REF", true);
-					
+
 					if (element.length < 3 || element.length > 4) {
 						error.getErrorMessage(getTransactionType(), "REF Size");
 					}
@@ -849,10 +857,10 @@ public class Dsco extends EDI {
 				break;
 			case "PRF":
 				fields.put("PRF", true);
-				if(element.length != 2) {
+				if (element.length != 2) {
 					error.getErrorMessage(getTransactionType(), "PRF Size");
 				}
-				if(element[1].isEmpty()) {
+				if (element[1].isEmpty()) {
 					error.getErrorMessage(getTransactionType(), "PRF01 Empty");
 				}
 			case "SN1":
@@ -943,9 +951,126 @@ public class Dsco extends EDI {
 
 			}
 		}
-		printer.printToForm(errorInformation);
-		printer.printMessageToForm(error.evaluateReqFields(fields));
+		// printer.printToForm(errorInformation);
+		errorInformation.add(error.evaluateReqFields(fields));
 	}
 
+	private void dsco810(ArrayList<String> transactionData, String elementSeparator) {
+		String holder = "";
+		String[] element;
+		String message = "";
+		String dateFormat = "yyyyMMdd";
+		String timeFormat = "HHmm";
+		createFieldsDsco856();
+
+		HashMap<String, Boolean> fields = getRequiredFields();
+
+		String transactionSetControlHeader = "";
+
+		// this will be the array that contains what we are going to print to the
+		// field--- had to do it this way because the error messages weren't getting
+		// added to the original ArrayList
+
+		// ArrayList<String> errorInformation = new ArrayList<String>();
+
+		for (int i = 0; i < transactionData.size(); i++) {
+			// assign the array element to holder
+			holder = transactionData.get(i);
+			holder = holder.trim();
+			// remove whitespace from beginning and end of the string
+
+			// split holder into the element array. So we can evaluate each segment of the
+			// EDI
+			element = holder.split(elementSeparator);
+			// element[0] = element[0].trim();
+			// if(elementSeparator != "/n") {
+			// element[0] = element[0].replaceAll("/n", "");
+			// }
+			switch (element[0]) {
+			case "ST":
+				fields.put("ST", true);
+				if (element.length != 3) {
+					message += error.getErrorMessage("General", "ST Size");
+					break;
+				}
+				// if the ST02 element isn't empty check the length of the data in that element.
+				if (!element[2].isEmpty()) {
+					if (element[2].length() > 9) {
+						message += error.getErrorMessage("General", "ST02 Size");
+					}
+				}
+				// check to see if ST02 is empty if it is pull an error
+				if (element[2].isEmpty()) {
+					message += error.getErrorMessage("General", "ST02 empty");
+				}
+				// if it isn't empty store the value in the ST02 in the
+				// transactionSetControlHeader variable for later comparison
+				else {
+					transactionSetControlHeader += element[2];
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+			case "BIG":
+				fields.put("BIG", true);
+				if (element.length != 5) {
+					message += error.getErrorMessage(getTransactionType(), "BIG Size");
+				}
+				if (element[1].isEmpty() || element[2].isEmpty() || element[4].isEmpty()) {
+					message += error.getErrorMessage(getTransactionType(), "BIG Req Empty");
+				}
+				if (!EDI_Filter.dateChecker(element[1], dateFormat)) {
+					message += error.getErrorMessage(getTransactionType(), "BIG01 Format");
+				}
+				if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
+					message += error.getErrorMessage(getTransactionType(), "BIG03 Format");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+
+			case "CUR":
+				if (element.length != 3) {
+					message += error.getErrorMessage(getTransactionType(), "CUR Size");
+				}
+				if (!element[1].equals("BY")) {
+					error.getErrorMessage(getTransactionType(), "CUR01 Value");
+				}
+				if (!element[2].equals("USD")) {
+					error.getErrorMessage(getTransactionType(), "CUR02 Value");
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+			case "REF":
+				if (element.length != 3 && element.length != 4) {
+					error.getErrorMessage(getTransactionType(), "REF Size");
+				}
+				if (!element[1].equals("ZZ") && !element[1].equals("IA") && !element[1].equals("IV")
+						&& !element[1].equals("CO") && !element[1].equals("CN")) {
+					error.getErrorMessage(getTransactionType(), "REF01 Value");
+				}
+				if (!element[2].isEmpty()) {
+					if (element[1].equals("ZZ")) {
+						if (!element[2].equals("ship_carrier") && !element[2].equals("ship_method")
+								&& !element[2].equals("A") && !element[2].equals("J") && !element[2].equals("R")
+								&& !element[2].equals("S")) {
+							message += error.getErrorMessage(getTransactionType(), "REF02 ZZValue");
+						}
+					}
+				}
+			}
+
+		}
+	}
 
 }

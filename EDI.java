@@ -36,6 +36,24 @@ public class EDI {
 	
 	private HashMap<String, Boolean> Dsco856 = new HashMap<String, Boolean>();
 	private HashMap<String, Boolean> Dsco846 = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> Dsco810 = new HashMap<String, Boolean>();
+	
+//	public void clearEDIData() {
+//		EDI_Data.clear();
+//		ediFile = null;
+//	}
+	
+	public void createFieldsDsco810() {
+		Dsco810.put("ST", false);
+		Dsco810.put("BIG", false);
+		Dsco810.put("ITD", false);
+		Dsco810.put("IT1", false);
+		Dsco810.put("TDS", false);
+		Dsco810.put("CTT", false);
+		Dsco810.put("SE", false);
+		
+		setRequiredFields(Dsco810);
+	}
 	
 	public void createFieldsDsco856() {
 		Dsco856.put("ST", false);
