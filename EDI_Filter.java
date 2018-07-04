@@ -19,7 +19,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 	JScrollPane jsp;
 	JButton fileSelectorButton, clearContents;
 	JLabel ediLab, buttonLab;
-	JRadioButton dscoRadio, nordRadio, kohlRadio;
+	JRadioButton dscoRadio, nordRadio, kohlRadio, dsco3Radio;
 	ButtonGroup filterGroup;
 	
 	Printer printer = new Printer(formattedEDI);
@@ -52,12 +52,13 @@ public class EDI_Filter extends EDI implements ActionListener {
 		ediLab = new JLabel("EDI Filter 1.0");
 		buttonLab = new JLabel("Press a button to select a file to filter or clear the text");
 
-		dscoRadio = new JRadioButton("DSCO EDI (846 READY)");
+		dscoRadio = new JRadioButton("DSCO old EDI (846, 856 READY)");
 		// dscoRadio.setActionCommand("Dsco Filter");
 		nordRadio = new JRadioButton("NORDSTORM EDI(UNDER DEV)");
 		// nordRadio.setActionCommand("Nordstrom Filter");
 		kohlRadio = new JRadioButton("KOHLS EDI (UNDER DEV)");
 		// kohlRadio.setActionCommand("Kohl Filter");
+		dsco3Radio = new JRadioButton("DSCO Current EDI (Under Dev)");
 
 		filterGroup = new ButtonGroup();
 
@@ -110,9 +111,10 @@ public class EDI_Filter extends EDI implements ActionListener {
 			setDscoRadioStatus(dscoRadio.isSelected());
 			setNordRadioStatus(nordRadio.isSelected());
 			setKohlRadioStatus(kohlRadio.isSelected());
+			setDsco3RadioStatus(dsco3Radio.isSelected());
 			
 			// If radio button is selected get the file and start the error checker for
-			if (getDscoRadioStatus() || getNordRadioStatus() || getKohlRadioStatus()) {
+			if (getDscoRadioStatus() || getNordRadioStatus() || getKohlRadioStatus() || getDsco3RadioStatus()) {
 				//try catch block to catch possible errors finding the files
 				try {
 					//calling the File Selector Method which returns a File object and storing it in the variable selectedFile
@@ -199,7 +201,9 @@ public class EDI_Filter extends EDI implements ActionListener {
 			} else if (getKohlRadioStatus()) {
 				// starts the error checking process for Dsco EDI spec (Not Done)
 				kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
-			} else {
+			} else if(getDsco3RadioStatus()){
+				dsco3ErrorCheck();
+			}else {
 				printer.printDataToForm(getSegments(),segmentTerminator);
 
 			}
@@ -232,7 +236,10 @@ public class EDI_Filter extends EDI implements ActionListener {
 						nordErrorCheck(getSegments(), selectedFile, elementSeparator);
 					} else if (getKohlRadioStatus()) {
 						kohlErrorCheck(getSegments(), selectedFile, elementSeparator);
-					} else {
+					} else if(getDsco3RadioStatus()){
+						dsco3ErrorCheck(); 
+					
+					}else {
 						// if there is no error checking involved write the file to the Downloads folder on the machine
 						fileIO.writeToFile(getSegments());
 					}
@@ -250,6 +257,9 @@ public class EDI_Filter extends EDI implements ActionListener {
 
 	public void kohlErrorCheck(String[] fileData, File selectedFile, String elementSeparator) {
 
+	}
+	public void dsco3ErrorCheck() {
+	
 	}
 
 // In-depth Error checking for Dsco 846:

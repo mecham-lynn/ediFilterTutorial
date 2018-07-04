@@ -24,9 +24,109 @@ public class Error {
 	private String InvoiceErrors(String errorParams) {
 		switch(errorParams) {
 		case "BIG Size":
-			return "-- The length of this segment is incorrect it should be 5 elements long--";
+			return "-- The length of this segment is incorrect it should be 4 elements long--";
+		case "BIG Req Empty":
+			return "-- One or more of the following elements are empty: BIG01, BIG02, BIG04 --";
+		case "BIG01 Format":
+			return "-- The date format for BIG01 is incorrect it must be in the CCYYMMDD format --";
+		case "BIG03 Format":
+			return "-- The date format for BIG03 is incorrect it must be in the CCYYMMDD format --";
+		case "CUR Size":
+			return "-- The length of this segment is incorrect it should be 2 elements long --";
+		case "CUR01 Value":
+			return "-- The value of the CUR01 segment is incorrect it should be 'BY' --";
+		case "CUR02 Vlaue":
+			return "-- The value of hte CUR02 segment is incorrect it should be 'USD' --";
+		case "REF Size":
+			return "-- The length of this segment is incorrect it should be 2 or 3 elements long --";
+		case "REF01 Value":
+			return "-- The value in the REFO1 element is incorrect "
+					+ "it should be one of the following: ZZ, IA, IV, CO, CN --";
+		case "REF02 ZZValue":
+			return "-- The value in the REF02 is incorrect. When the REF01 is ZZ the REF02 should "
+					+ "be one of the following: A, J, R, S, or a decimal value --";
+		case "REF03 ZZValues":
+			return "-- The value in the REF03 is incorrect. When the REF01 is ZZ the REF03 should be one of the following: "
+					+ "ship_carrier, ship_method, shipping_service_level_code, ship_transportation_method_code, ship_reference_number_equals,"
+					+ "invoice_subtotal_excluding_line_items, invoice_line_items_subtotal --";
+		case "N101 Value":
+			return" -- The value of the N101 element is incorrect, it should be 'ST' or 'SF' --";
+		case "N1 Size":
+			return "-- The length of the N1 segment is incorrect it hsould be 2 elements long --";
+		case "N3 Size":
+			return "-- The length of the N3 segment is incorrect it should be 2 elements long --";
+		case "N4 Size":
+			return "-- The length of the N4 segment is incorrect it should be 4 elements long --";
+		case "ITD Size":
+			return "-- The length of the ITD segment is incorrect it should be 13 elements long --";
+		case "ITD01 Value":
+			return "-- The value in the ITD01 element is incorrect it should be one of the following: 01, 02, 05, 08, or 12 --";
+		case "ITD02 Value":
+			return "-- The value in the ITD02 element is incorrect it should be '3' --";
+		case "ITD Req Empty":
+			return "-- One of the following element are empty: ITD04, ITD05, ITD06, ITD07, or ITD13 --";
+		case "ITD08 Value":
+			return "-- The value in the ITD08 is incorrect it must be a decimal number --";
+		case "ITD09-12 Populated":
+			return "-- One of the elements in the range ITD09-12 is populated when they are supposed to be empty --";
+		case "DTM Size":
+			return "-- The length of the DTM segment is incorrect it should be 3 elements long --";
+		case "DTM02 Format":
+			return "-- The format of the data in the DTM02 element is incorrect it should match CCYYMMDD --";
+		case "DTM03 Format":
+			return "-- The format of the data in the DTM03 element is incorrect it should match HHMM --";
+		case "IT1 Size":
+			return "-- The length of the IT1 segment is incorrect it needs to be between 7 and 19 elements long --";
+		case "IT1 Req Empty":
+			return "-- One or both of the following fields are empty and cannot be: IT102 and IT107 --";
+		case "IT103 Value":
+			return "-- The value in the IT103 element is incorrect, it should be 'EA' --";
+		case "IT104 Value":
+			return "-- The value in the IT104 element is incorrect, it should be a decimal number --";
+		case "IT105 Value":
+			return"-- The value in the IT105 element is incorrect, it should be either 'QT' or 'LE' --";
+		case "IT106 Value":
+			return "-- The value in the IT106 element is incorrect, it should be 'SK' --";
+		case "IT107 SKU Length":
+			return "-- The value in the IT106 element is too long, it needs to be under 70 characters --";
+		case "IT108 Value":
+			return "-- The value in the IT108 element is incorrect it should be 'UP' --";
+		case "IT109 UPC Length":
+			return "-- The UPC value in the IT109 has the incorrect length, UPC's need to be 6 or 12 characters --";
+		case "IT109 Empty":
+			return "-- When the IT108 is provided the IT109 cannot be empty --";
+		case "IT110 Value":
+			return "-- The value in the IT110 element is incorrect it should be 'EN' --";
+		case "IT111 EAN Length":
+			return "-- The EAN value in the IT111 element has the incorrect length, EAN's are 13 characters --";
+		case "IT111 Empty":
+			return " -- When the IT110 is provided the IT111 cannot be empty --";
+		case "IT112 Value":
+			return "-- The value in the IT112 element is incorrect it should be 'MG' --";
+		case "IT113 Empty":
+			return "-- When the IT112 is provided the IT113 cannot be empty";
+		case "IT114 Value":
+			return "-- The value in the IT114 element is incorrect it should be 'ZZ' --";
+		case "IT115 Empty":
+			return "-- When the IT114 is provided the IT115 cannot be empty";
+		case "IT116 Value":
+			return "-- The value in the IT116 element is incorrect it should be 'ZZ' --";
+		case "IT117 Empty":
+			return "-- When the IT116 is provided the IT117 cannot be empty";
+		case "IT118 Value":
+			return "-- The value in the IT118 element is incorrect it should be 'ZZ' --";
+		case "IT119 Empty":
+			return "-- When the IT116 is provided the IT117 cannot be empty";
+		case "TDS01 Empty":
+			return "-- TDS01 is a required field and cannot be empty --";
+		case "TDS Size":
+			return "-- The length of the TDS segment is incorrect, it must be 2 elements long --";
+		case "TDS01 Value":
+			return "-- The TDS01 value is incorrect it must be a decimal value --";
 			
-		}
+			
+			
+		} 
 		return null;
 	}
 

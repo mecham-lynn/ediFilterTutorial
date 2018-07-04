@@ -12,6 +12,7 @@ public class Dsco extends EDI {
 	FileIO fileIO;
 	// EDI_Filter filter = new EDI_Filter();
 	ArrayList<String> errorInformation = new ArrayList<String>();
+	private String decimalPattern = "\\d*\\.?\\d+";
 
 	public Dsco(Printer printer) {
 		this.printer = printer;
@@ -86,9 +87,9 @@ public class Dsco extends EDI {
 						// dsco870(transactionData);
 						break;
 					case "810":
-						System.out.println(transactionData);
+						// System.out.println(transactionData);
 						// formattedEDI.append("\n You got to the 810 Switch statement");
-						// dsco810(transactionData);
+						dsco810(transactionData, elementSeparator);
 						break;
 					}
 					// break;
@@ -900,7 +901,7 @@ public class Dsco extends EDI {
 					if (!element[2].equals("G821")) {
 						message += error.getErrorMessage(getTransactionType(), "SAC02 Value");
 					}
-					if (!element[5].matches("\\d*\\.?\\d+")) {
+					if (!element[5].matches(decimalPattern)) {
 						message += error.getErrorMessage(getTransactionType(), "SAC05 Decimal");
 					}
 					if (!element[3].isEmpty() || !element[4].isEmpty()) {
@@ -1015,18 +1016,22 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "BIG":
-				fields.put("BIG", true);
-				if (element.length != 5) {
-					message += error.getErrorMessage(getTransactionType(), "BIG Size");
-				}
-				if (element[1].isEmpty() || element[2].isEmpty() || element[4].isEmpty()) {
-					message += error.getErrorMessage(getTransactionType(), "BIG Req Empty");
-				}
-				if (!EDI_Filter.dateChecker(element[1], dateFormat)) {
-					message += error.getErrorMessage(getTransactionType(), "BIG01 Format");
-				}
-				if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
-					message += error.getErrorMessage(getTransactionType(), "BIG03 Format");
+				try {
+					fields.put("BIG", true);
+					if (element.length != 5) {
+						message += error.getErrorMessage(getTransactionType(), "BIG Size");
+					}
+					if (element[1].isEmpty() || element[2].isEmpty() || element[4].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "BIG Req Empty");
+					}
+					if (!EDI_Filter.dateChecker(element[1], dateFormat)) {
+						message += error.getErrorMessage(getTransactionType(), "BIG01 Format");
+					}
+					if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
+						message += error.getErrorMessage(getTransactionType(), "BIG03 Format");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
 				// add the data with any errors to the errorInformation ArrayList
 				errorInformation.add(holder + message);
@@ -1036,14 +1041,18 @@ public class Dsco extends EDI {
 				break;
 
 			case "CUR":
-				if (element.length != 3) {
-					message += error.getErrorMessage(getTransactionType(), "CUR Size");
-				}
-				if (!element[1].equals("BY")) {
-					error.getErrorMessage(getTransactionType(), "CUR01 Value");
-				}
-				if (!element[2].equals("USD")) {
-					error.getErrorMessage(getTransactionType(), "CUR02 Value");
+				try {
+					if (element.length != 3) {
+						message += error.getErrorMessage(getTransactionType(), "CUR Size");
+					}
+					if (!element[1].equals("BY")) {
+						error.getErrorMessage(getTransactionType(), "CUR01 Value");
+					}
+					if (!element[2].equals("USD")) {
+						error.getErrorMessage(getTransactionType(), "CUR02 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
 				// add the data with any errors to the errorInformation ArrayList
 				errorInformation.add(holder + message);
@@ -1052,22 +1061,269 @@ public class Dsco extends EDI {
 				// get out of the loop so we can move on to the next segment in the EDI
 				break;
 			case "REF":
-				if (element.length != 3 && element.length != 4) {
-					error.getErrorMessage(getTransactionType(), "REF Size");
-				}
-				if (!element[1].equals("ZZ") && !element[1].equals("IA") && !element[1].equals("IV")
-						&& !element[1].equals("CO") && !element[1].equals("CN")) {
-					error.getErrorMessage(getTransactionType(), "REF01 Value");
-				}
-				if (!element[2].isEmpty()) {
-					if (element[1].equals("ZZ")) {
-						if (!element[2].equals("ship_carrier") && !element[2].equals("ship_method")
-								&& !element[2].equals("A") && !element[2].equals("J") && !element[2].equals("R")
-								&& !element[2].equals("S")) {
-							message += error.getErrorMessage(getTransactionType(), "REF02 ZZValue");
+				try {
+					if (element.length != 3 && element.length != 4) {
+						error.getErrorMessage(getTransactionType(), "REF Size");
+					}
+					if (!element[1].equals("ZZ") && !element[1].equals("IA") && !element[1].equals("IV")
+							&& !element[1].equals("CO") && !element[1].equals("CN")) {
+						error.getErrorMessage(getTransactionType(), "REF01 Value");
+					}
+					if (!element[2].isEmpty()) {
+						if (element[1].equals("ZZ")) {
+							if (!element[2].equals("A") && !element[2].equals("J") && !element[2].equals("R")
+									&& !element[2].equals("S") && !element[2].matches(decimalPattern)) {
+								if (!element[3].equals("ship_carrier") && !element[3].equals("ship_method")) {
+
+									message += error.getErrorMessage(getTransactionType(), "REF02 ZZValue");
+								}
+							}
 						}
 					}
+					if (!element[3].isEmpty()) {
+						if (element[1].equals("ZZ")) {
+							if (!element[3].equals("ship_carrier") && !element[3].equals("ship_method")
+									&& !element[3].equals("shipping_service_level_code")
+									&& !element[3].equals("ship_transportation_method_code")
+									&& !element[3].equals("ship_reference_number_equals")
+									&& !element[3].equals("invoice_subtotal_excluding_line_items")
+									&& !element[3].equals("invoice_line_items_subtotal")) {
+
+								message += error.getErrorMessage(getTransactionType(), "REF03 ZZValues");
+
+							}
+						}
+
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "N1":
+				try {
+					if (element.length != 3) {
+						message += error.getErrorMessage(getTransactionType(), "N1 Size");
+					}
+					if (!element[1].equals("ST") || !element[1].equals("SF")) {
+						message += error.getErrorMessage(getTransactionType(), "N101 Value");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "N3":
+				try {
+					if (element.length != 3) {
+						error.getErrorMessage(getTransactionType(), "N3 Size");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "N4":
+				try {
+					if (element.length != 5) {
+
+						error.getErrorMessage(getTransactionType(), "N4 Size");
+
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "ITD":
+				fields.put("ITD", true);
+				try {
+					if (element.length != 14) {
+						error.getErrorMessage(getTransactionType(), "ITD Size");
+					}
+					if (!element[1].equals("01") && !element[1].equals("02") && !element[1].equals("05")
+							&& !element[1].equals("08") && !element[1].equals("12")) {
+
+						message += error.getErrorMessage(getTransactionType(), "ITD01 Value");
+					}
+					if (!element[2].equals("3")) {
+						message += error.getErrorMessage(getTransactionType(), "ITD02 Value");
+					}
+					if (element[4].isEmpty() || element[5].isEmpty() || element[6].isEmpty() || element[7].isEmpty()
+							|| element[13].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "ITD Req Empty");
+					}
+					if (!element[8].matches(decimalPattern)) {
+						message += error.getErrorMessage(getTransactionType(), "ITD08 Value");
+					}
+					if (!element[9].isEmpty() || !element[10].isEmpty() || !element[11].isEmpty()
+							|| element[12].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "ITD09-12 Populated");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+			case "DTM":
+				try {
+					if (element.length != 4) {
+						message += error.getErrorMessage(getTransactionType(), "DTM Size");
+					} else {
+
+						if (!element[1].equals("011")) {
+							message += error.getErrorMessage(getTransactionType(), "DTM01 Value");
+						}
+						if (!EDI_Filter.dateChecker(dateFormat, element[2])) {
+							message += error.getErrorMessage(getTransactionType(), "DTM02 Format");
+						}
+						if (!EDI_Filter.dateChecker(timeFormat, element[3])) {
+							message += error.getErrorMessage(getTransactionType(), "DTM03 Format");
+						}
+
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "IT1":
+				fields.put("IT1", true);
+				try {
+
+					if (element.length < 8 || element.length > 20) {
+						message += error.getErrorMessage(getTransactionType(), "IT1 Size");
+					}
+					if (element[2].isEmpty() || element[7].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "IT1 Req Empty");
+					}
+					if (!element[3].equals("EA")) {
+						message += error.getErrorMessage(getTransactionType(), "IT103 Value");
+					}
+					if (!element[4].matches(decimalPattern)) {
+						message += error.getErrorMessage(getTransactionType(), "IT104 Value");
+					}
+					if (!element[5].equals("QT") && !element[5].equals("LE")) {
+						message += error.getErrorMessage(getTransactionType(), "IT105 Value");
+					}
+					if (!element[6].equals("SK")) {
+						message += error.getErrorMessage(getTransactionType(), "IT106 Value");
+					}
+					if (element[7].length() > 70) {
+						message += error.getErrorMessage(getTransactionType(), "IT107 SKU Length");
+					}
+					if (!element[8].isEmpty()) {
+						if (!element[8].equals("UP")) {
+							message += error.getErrorMessage(getTransactionType(), "IT108 Value");
+						}
+						if (element[9].length() != 6 && element[9].length() != 12) {
+							message += error.getErrorMessage(getTransactionType(), "IT109 UPC Length");
+
+						}
+						if (element[9].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT109 Empty");
+						}
+					}
+					if (!element[10].isEmpty()) {
+						if (!element[10].equals("EN")) {
+							message += error.getErrorMessage(getTransactionType(), "IT110 Value");
+						}
+						if (element[11].length() != 13) {
+							message += error.getErrorMessage(getTransactionType(), "IT111 EAN Length");
+						}
+						if (element[11].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT111 Empty");
+						}
+					}
+					if (!element[12].isEmpty()) {
+						if (!element[12].equals("MG")) {
+							message += error.getErrorMessage(getTransactionType(), "IT112 Value");
+						}
+						if (element[13].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT113 Empty");
+						}
+					}
+					if (!element[14].isEmpty()) {
+						if (element[14].equals("ZZ")) {
+							message += error.getErrorMessage(getTransactionType(), "IT114 Value");
+						}
+						if (element[15].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT115 Empty");
+						}
+					}
+					if (!element[16].isEmpty()) {
+						if (element[16].equals("ZZ")) {
+							message += error.getErrorMessage(getTransactionType(), "IT116 Value");
+						}
+						if (element[17].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT117 Empty");
+						}
+					}
+					if (!element[18].isEmpty()) {
+						if (element[18].equals("ZZ")) {
+							message += error.getErrorMessage(getTransactionType(), "IT118 Value");
+						}
+						if (element[19].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "IT119 Empty");
+						}
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "TDS":
+				fields.put("TDS", true);
+				try {
+					
+					if(element.length != 3) {
+						message += error.getErrorMessage(getTransactionType(), "TDS Size");
+					}
+					if(element[1].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "TDS01 Empty");
+					}else {
+						if(element[1].matches(decimalPattern)) {
+							message += error.getErrorMessage(getTransactionType(), "TDS01 Value");
+						}
+						if(!element[2].isEmpty()) {
+							if(!element[2].matches(decimalPattern)) {
+								message += error.getErrorMessage(getTransactionType(), "TDS02 Value");
+							}
+						}
+					}
+					
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
 			}
 
 		}

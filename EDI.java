@@ -21,6 +21,7 @@ public class EDI {
 	private boolean dscoRadioStatus;
 	private boolean nordRadioStatus;
 	private boolean kohlRadioStatus;
+	private boolean dsco3RadioStatus;
 	
 //	private JTextArea form;
 //	
@@ -98,6 +99,14 @@ public class EDI {
 		this.unfilteredEdi = data;
 	}
 	
+	public boolean getDsco3RadioStatus() {
+		return this.dsco3RadioStatus;
+	}
+	
+	
+	public void setDsco3RadioStatus(boolean status) {
+		this.dsco3RadioStatus = status;
+	}
 	
 	public boolean getNordRadioStatus() {
 		return this.nordRadioStatus;
