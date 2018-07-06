@@ -23,6 +23,7 @@ public class Error {
 	
 	private String InvoiceErrors(String errorParams) {
 		switch(errorParams) {
+		// Messages for BIG 
 		case "BIG Size":
 			return "-- The length of this segment is incorrect it should be 4 elements long--";
 		case "BIG Req Empty":
@@ -31,32 +32,49 @@ public class Error {
 			return "-- The date format for BIG01 is incorrect it must be in the CCYYMMDD format --";
 		case "BIG03 Format":
 			return "-- The date format for BIG03 is incorrect it must be in the CCYYMMDD format --";
+		
+			// Messages for CUR 
 		case "CUR Size":
 			return "-- The length of this segment is incorrect it should be 2 elements long --";
 		case "CUR01 Value":
 			return "-- The value of the CUR01 segment is incorrect it should be 'BY' --";
 		case "CUR02 Vlaue":
 			return "-- The value of hte CUR02 segment is incorrect it should be 'USD' --";
+		
+			// Messages for REF 
 		case "REF Size":
 			return "-- The length of this segment is incorrect it should be 2 or 3 elements long --";
 		case "REF01 Value":
 			return "-- The value in the REFO1 element is incorrect "
 					+ "it should be one of the following: ZZ, IA, IV, CO, CN --";
-		case "REF02 ZZValue":
-			return "-- The value in the REF02 is incorrect. When the REF01 is ZZ the REF02 should "
-					+ "be one of the following: A, J, R, S, or a decimal value --";
+		case "REF ZZTransportation Code":
+			return "-- The value in the REF02 is incorrect. When the REF03 is 'ship_transportation_method_code' the REF02 should "
+					+ "be one of the following: A, J, R, or S --";
 		case "REF03 ZZValues":
 			return "-- The value in the REF03 is incorrect. When the REF01 is ZZ the REF03 should be one of the following: "
 					+ "ship_carrier, ship_method, shipping_service_level_code, ship_transportation_method_code, ship_reference_number_equals,"
 					+ "invoice_subtotal_excluding_line_items, invoice_line_items_subtotal --";
+		case "REF Ship_reference Value":
+			return "-- The value in the REF02 is incorrect it must be either 'BM' or 'CN' when the REF03 is ship_reference_number_qualifier --";
+		case "REF Decimal":
+			return "-- The value in the REF02 is incorrect it should be a decimal number --";
+		
+			// Messages for N1 
 		case "N101 Value":
 			return" -- The value of the N101 element is incorrect, it should be 'ST' or 'SF' --";
 		case "N1 Size":
 			return "-- The length of the N1 segment is incorrect it hsould be 2 elements long --";
+			
+			
+			// Messages for N3
 		case "N3 Size":
 			return "-- The length of the N3 segment is incorrect it should be 2 elements long --";
+		
+		// Messages for N4
 		case "N4 Size":
 			return "-- The length of the N4 segment is incorrect it should be 4 elements long --";
+		
+			// Messages for ITD
 		case "ITD Size":
 			return "-- The length of the ITD segment is incorrect it should be 13 elements long --";
 		case "ITD01 Value":
@@ -69,12 +87,16 @@ public class Error {
 			return "-- The value in the ITD08 is incorrect it must be a decimal number --";
 		case "ITD09-12 Populated":
 			return "-- One of the elements in the range ITD09-12 is populated when they are supposed to be empty --";
+		
+			// Messages for DTM
 		case "DTM Size":
 			return "-- The length of the DTM segment is incorrect it should be 3 elements long --";
 		case "DTM02 Format":
 			return "-- The format of the data in the DTM02 element is incorrect it should match CCYYMMDD --";
 		case "DTM03 Format":
 			return "-- The format of the data in the DTM03 element is incorrect it should match HHMM --";
+		
+			// Messages for IT1
 		case "IT1 Size":
 			return "-- The length of the IT1 segment is incorrect it needs to be between 7 and 19 elements long --";
 		case "IT1 Req Empty":
@@ -117,17 +139,60 @@ public class Error {
 			return "-- The value in the IT118 element is incorrect it should be 'ZZ' --";
 		case "IT119 Empty":
 			return "-- When the IT116 is provided the IT117 cannot be empty";
+		
+			// Messages for TDS
 		case "TDS01 Empty":
 			return "-- TDS01 is a required field and cannot be empty --";
 		case "TDS Size":
 			return "-- The length of the TDS segment is incorrect, it must be 2 elements long --";
 		case "TDS01 Value":
 			return "-- The TDS01 value is incorrect it must be a decimal value --";
+		case "TDS02 Value":
+			return "-- The TDS02 value is incorrect it must be a decimal value --";
+		
+			// Messages for AMT
+		case "AMT01 Value":
+			return "-- The AMT01 value is incorrect it should be either 'OH' or 'F7' --";
+		case "AMT02 Value":
+			return"-- The AMT02 Value is incorrect it should be a decimal value --";
+		
+		
+			// Messages for SAC
+		case "SAC Size":
+			return "-- The length of the SAC segment is incorrect it should be 5 elements long --";
+		case "SAC01 Value":
+			return "-- The value of the SAC01 element is incorrect it should be 'C' --";
+		case "SAC02 Value":
+			return "-- The value of hte SAC02 element is incorrect it should be 'D240' --";
+		case "SAC Req Populated":
+			return "-- Elements SAC03 and SAC04 are required to be empty --";
+		case "SAC05 Value":
+			return "-- The value of SAC05 is incorrect it should be a decimal character --";
+		
+		
+			// Messages for ISS
+		case "ISS Size":
+			return "-- The length of the ISS segment is incorrect it should be 4 elements long --";
+		case "ISS01 Empty":
+			return "-- The ISS01 is empty, when the ISS segment is included the ISS01 is needed --";
+		case "ISS02 Value":
+			return "-- The value of hte ISS02 is incorrect it needs to be one of the following: 'CA', 'BX', 'PK' --";
+		case "ISS03 Empty":
+			return "-- The ISS03 is empty, when the ISS segment is included the ISS03 is needed --";
+		case "ISS04 Value":
+			return "-- The ISS04 value is incorrect it should be one of the following: 'LB', 'OZ', '50' --";
+		
+			// Messages for CTT 
+		case "CTT Size":
+			return "-- The length of the CTT segment is incorrect it needs to be 1 element long --";
+		case "CTT01 Value":
+			return " -- The value of the CTT01 segment is incorrect it should be equal to the number of lin-items in the transaction --";
 			
+		default:
+			return "";
 			
 			
 		} 
-		return null;
 	}
 
 	public String evaluateReqFields(HashMap<String, Boolean> reqFields) {

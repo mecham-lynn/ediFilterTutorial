@@ -962,7 +962,9 @@ public class Dsco extends EDI {
 		String message = "";
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmm";
-		createFieldsDsco856();
+		createFieldsDsco810();
+
+		int lineItemCount = 0;
 
 		HashMap<String, Boolean> fields = getRequiredFields();
 
@@ -1067,33 +1069,59 @@ public class Dsco extends EDI {
 					}
 					if (!element[1].equals("ZZ") && !element[1].equals("IA") && !element[1].equals("IV")
 							&& !element[1].equals("CO") && !element[1].equals("CN")) {
-						error.getErrorMessage(getTransactionType(), "REF01 Value");
+						message += error.getErrorMessage(getTransactionType(), "REF01 Value");
 					}
-					if (!element[2].isEmpty()) {
-						if (element[1].equals("ZZ")) {
-							if (!element[2].equals("A") && !element[2].equals("J") && !element[2].equals("R")
-									&& !element[2].equals("S") && !element[2].matches(decimalPattern)) {
-								if (!element[3].equals("ship_carrier") && !element[3].equals("ship_method")) {
-
-									message += error.getErrorMessage(getTransactionType(), "REF02 ZZValue");
-								}
-							}
-						}
+					if(element[2].isEmpty()) {
+						message+= error.getErrorMessage(getTransactionType(), "REF02 Empty");
 					}
 					if (!element[3].isEmpty()) {
 						if (element[1].equals("ZZ")) {
+							if (element[3].equals("ship_transportation_method_code")) {
+								if (!element[2].equals("A") && !element[2].equals("J") && !element[2].equals("R")
+										&& !element[2].equals("S")) {
+									message += error.getErrorMessage(getTransactionType(), "REF ZZTransportation Code");
+								}
+
+							}
 							if (!element[3].equals("ship_carrier") && !element[3].equals("ship_method")
 									&& !element[3].equals("shipping_service_level_code")
 									&& !element[3].equals("ship_transportation_method_code")
-									&& !element[3].equals("ship_reference_number_equals")
+									&& !element[3].equals("ship_reference_number_qualifier")
 									&& !element[3].equals("invoice_subtotal_excluding_line_items")
-									&& !element[3].equals("invoice_line_items_subtotal")) {
+									&& !element[3].equals("invoice_line_items_subtotal")
+									&& !element[3].equals("line_item_extended_amount")
+									&& !element[3].equals("line_item_handling_amount")
+									&& !element[3].equals("line_item_ship_amount")
+									&& !element[3].equals("line_item_ship_carrier")
+									&& !element[3].equals("line_item_ship_method")
+									&& !element[3].equals("line_item_shipping_service_level_code")
+									&& !element[3].equals("line_item_promotion_reference")
+									&& !element[3].equals("line_item_promotion_amount")
+									&& !element[3].equals("line_item_tax_amount")
+									&& !element[3].equals("line_item_subtotal")) {
 
 								message += error.getErrorMessage(getTransactionType(), "REF03 ZZValues");
 
 							}
-						}
+							if (element[3].equals("ship_reference_number_qualifier")) {
+								if (!element[2].equals("BM") && !element[2].equals("CN")) {
+									message += error.getErrorMessage(getTransactionType(), "REF Ship_reference Value");
+								}
+							}
+							if (element[3].equals("invoice_subtotal_excluding_line_items")
+									|| element[3].equals("invoice_line_items_subtotal")
+									|| element[3].equals("line_item_extended_amount")
+									|| element[3].equals("line_item_handling_amount")
+									|| element[3].equals("line_item_ship_amount")
+									|| element[3].equals("line_item_promotion_amount")
+									|| element[3].equals("line_item_tax_amount")
+									|| element[3].equals("line_item_subtotal")) {
+								if (!element[2].matches(decimalPattern)) {
+									message += error.getErrorMessage(getTransactionType(), "REF Decimal");
+								}
+							}
 
+						}
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
@@ -1108,7 +1136,7 @@ public class Dsco extends EDI {
 					if (element.length != 3) {
 						message += error.getErrorMessage(getTransactionType(), "N1 Size");
 					}
-					if (!element[1].equals("ST") || !element[1].equals("SF")) {
+					if (!element[1].equals("ST") && !element[1].equals("SF")) {
 						message += error.getErrorMessage(getTransactionType(), "N101 Value");
 					}
 
@@ -1162,17 +1190,19 @@ public class Dsco extends EDI {
 					if (!element[2].equals("3")) {
 						message += error.getErrorMessage(getTransactionType(), "ITD02 Value");
 					}
-					if (element[4].isEmpty() || element[5].isEmpty() || element[6].isEmpty() || element[7].isEmpty()
-							|| element[13].isEmpty()) {
-						message += error.getErrorMessage(getTransactionType(), "ITD Req Empty");
-					}
-					if (!element[8].matches(decimalPattern)) {
-						message += error.getErrorMessage(getTransactionType(), "ITD08 Value");
-					}
-					if (!element[9].isEmpty() || !element[10].isEmpty() || !element[11].isEmpty()
-							|| element[12].isEmpty()) {
-						message += error.getErrorMessage(getTransactionType(), "ITD09-12 Populated");
-					}
+					if(element[1].equals("02") || element[1].equals("12")) {
+						if (element[4].isEmpty() || element[5].isEmpty() || element[6].isEmpty() || element[7].isEmpty()
+								|| element[13].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "ITD Req Empty");
+						}
+						if (!element[9].isEmpty() || !element[10].isEmpty() || !element[11].isEmpty()
+								|| element[12].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "ITD09-12 Populated");
+						}
+						if (!element[8].matches(decimalPattern)) {
+							message += error.getErrorMessage(getTransactionType(), "ITD08 Value");
+						}
+					}	
 
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
@@ -1209,6 +1239,7 @@ public class Dsco extends EDI {
 
 			case "IT1":
 				fields.put("IT1", true);
+				lineItemCount++;
 				try {
 
 					if (element.length < 8 || element.length > 20) {
@@ -1299,23 +1330,22 @@ public class Dsco extends EDI {
 			case "TDS":
 				fields.put("TDS", true);
 				try {
-					
-					if(element.length != 3) {
+
+					if (element.length != 3) {
 						message += error.getErrorMessage(getTransactionType(), "TDS Size");
 					}
-					if(element[1].isEmpty()) {
+					if (element[1].isEmpty()) {
 						message += error.getErrorMessage(getTransactionType(), "TDS01 Empty");
-					}else {
-						if(element[1].matches(decimalPattern)) {
+					} else {
+						if (element[1].matches(decimalPattern)) {
 							message += error.getErrorMessage(getTransactionType(), "TDS01 Value");
 						}
-						if(!element[2].isEmpty()) {
-							if(!element[2].matches(decimalPattern)) {
+						if (!element[2].isEmpty()) {
+							if (!element[2].matches(decimalPattern)) {
 								message += error.getErrorMessage(getTransactionType(), "TDS02 Value");
 							}
 						}
 					}
-					
 
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
@@ -1324,9 +1354,130 @@ public class Dsco extends EDI {
 				errorInformation.add(holder + message);
 				message = "";
 				break;
+
+			case "AMT":
+				try {
+					if (!element[1].equals("OH") && !element[1].equals("F7")) {
+						message += error.getErrorMessage(getTransactionType(), "AMT01 Value");
+					}
+					if (!element[2].matches(decimalPattern)) {
+						message += error.getErrorMessage(getTransactionType(), "AMT02 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "SAC":
+				try {
+					if (element.length != 6) {
+						message += error.getErrorMessage(getTransactionType(), "SAC Size");
+					}
+					if (!element[1].equals("C")) {
+						message += error.getErrorMessage(getTransactionType(), "SAC01 Value");
+					}
+					if (!element[2].equals("D240")) {
+						message += error.getErrorMessage(getTransactionType(), "SAC02 Value");
+					}
+					if (!element[3].isEmpty() || !element[4].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "SAC Req Populated");
+					}
+					if (!element[5].matches(decimalPattern)) {
+						message += error.getErrorMessage(getTransactionType(), "SAC05 Value");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+			case "ISS":
+				try {
+
+					if (element.length != 5) {
+						message += error.getErrorMessage(getTransactionType(), "ISS Size");
+					}
+					if (element[1].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "ISS01 Empty");
+					}
+					if (!element[2].equals("CA") && !element[2].equals("BX") && !element[2].equals("PK")) {
+
+						message += error.getErrorMessage(getTransactionType(), "ISS02 Value");
+					}
+					if (element[3].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "ISS03 Empty");
+					}
+					if (!element[4].equals("LB") && !element[4].equals("OZ") && !element[4].equals("50")) {
+						message += error.getErrorMessage(getTransactionType(), "ISS04 Value");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "CTT":
+				String tempHolder = "";
+				int transactionLines;
+				try {
+					fields.put("CTT", true);
+
+					tempHolder += element[1];
+
+					transactionLines = Integer.parseInt(tempHolder);
+
+					if (element.length != 2) {
+						message += error.getErrorMessage(getTransactionType(), "CTT Size");
+					}
+					if (transactionLines != lineItemCount) {
+						message += error.getErrorMessage(getTransactionType(), "CTT01 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "SE":
+				try {
+					fields.put("SE", true);
+					int result;
+					String count = "";
+					count += element[1];
+					result = Integer.parseInt(count);
+					if (element.length != 3) {
+						message += error.getErrorMessage("General", "SE Size");
+					}
+					if (element[1].isEmpty()) {
+						message += error.getErrorMessage("General", "SE01 Empty");
+						break;
+					}
+					if (result != transactionData.size()) {
+						message += error.getErrorMessage("General", "SE01 Value");
+					}
+					if (!element[2].equals(transactionSetControlHeader)) {
+						message += error.getErrorMessage("General", "SE02 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
 			}
 
 		}
+		errorInformation.add(error.evaluateReqFields(fields));
 	}
 
 }

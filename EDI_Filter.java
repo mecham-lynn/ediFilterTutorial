@@ -92,6 +92,7 @@ public class EDI_Filter extends EDI implements ActionListener {
 		frm.add(dscoRadio);
 		frm.add(nordRadio);
 		frm.add(kohlRadio);
+		frm.add(dsco3Radio);
 		frm.add(jsp);
 		frm.add(buttonLab);
 		frm.add(fileSelectorButton);
