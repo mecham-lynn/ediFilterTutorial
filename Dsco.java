@@ -1220,10 +1220,10 @@ public class Dsco extends EDI {
 						if (!element[1].equals("011")) {
 							message += error.getErrorMessage(getTransactionType(), "DTM01 Value");
 						}
-						if (!EDI_Filter.dateChecker(dateFormat, element[2])) {
+						if (!EDI_Filter.dateChecker(element[2], dateFormat)) {
 							message += error.getErrorMessage(getTransactionType(), "DTM02 Format");
 						}
-						if (!EDI_Filter.dateChecker(timeFormat, element[3])) {
+						if (!EDI_Filter.dateChecker(element[3], dateFormat)) {
 							message += error.getErrorMessage(getTransactionType(), "DTM03 Format");
 						}
 
@@ -1295,7 +1295,7 @@ public class Dsco extends EDI {
 						}
 					}
 					if (!element[14].isEmpty()) {
-						if (element[14].equals("ZZ")) {
+						if (!element[14].equals("ZZ")) {
 							message += error.getErrorMessage(getTransactionType(), "IT114 Value");
 						}
 						if (element[15].isEmpty()) {
@@ -1303,7 +1303,7 @@ public class Dsco extends EDI {
 						}
 					}
 					if (!element[16].isEmpty()) {
-						if (element[16].equals("ZZ")) {
+						if (!element[16].equals("ZZ")) {
 							message += error.getErrorMessage(getTransactionType(), "IT116 Value");
 						}
 						if (element[17].isEmpty()) {
@@ -1311,7 +1311,7 @@ public class Dsco extends EDI {
 						}
 					}
 					if (!element[18].isEmpty()) {
-						if (element[18].equals("ZZ")) {
+						if (!element[18].equals("ZZ")) {
 							message += error.getErrorMessage(getTransactionType(), "IT118 Value");
 						}
 						if (element[19].isEmpty()) {
@@ -1331,13 +1331,13 @@ public class Dsco extends EDI {
 				fields.put("TDS", true);
 				try {
 
-					if (element.length != 3) {
+					if (element.length > 3) {
 						message += error.getErrorMessage(getTransactionType(), "TDS Size");
 					}
 					if (element[1].isEmpty()) {
 						message += error.getErrorMessage(getTransactionType(), "TDS01 Empty");
 					} else {
-						if (element[1].matches(decimalPattern)) {
+						if (!element[1].matches(decimalPattern)) {
 							message += error.getErrorMessage(getTransactionType(), "TDS01 Value");
 						}
 						if (!element[2].isEmpty()) {
