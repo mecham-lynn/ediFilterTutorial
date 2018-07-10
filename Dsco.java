@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+
 public class Dsco extends EDI {
 	Error error = new Error();
 	Printer printer;
@@ -82,9 +83,9 @@ public class Dsco extends EDI {
 						dsco856(transactionData, elementSeparator);
 						break;
 					case "870":
-						System.out.println(transactionData);
+						// System.out.println(transactionData);
 						// formattedEDI.append("\n You got to the 870 Switch statement");
-						// dsco870(transactionData);
+						dsco870(transactionData, elementSeparator);
 						break;
 					case "810":
 						// System.out.println(transactionData);
@@ -1071,8 +1072,8 @@ public class Dsco extends EDI {
 							&& !element[1].equals("CO") && !element[1].equals("CN")) {
 						message += error.getErrorMessage(getTransactionType(), "REF01 Value");
 					}
-					if(element[2].isEmpty()) {
-						message+= error.getErrorMessage(getTransactionType(), "REF02 Empty");
+					if (element[2].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "REF02 Empty");
 					}
 					if (!element[3].isEmpty()) {
 						if (element[1].equals("ZZ")) {
@@ -1190,7 +1191,7 @@ public class Dsco extends EDI {
 					if (!element[2].equals("3")) {
 						message += error.getErrorMessage(getTransactionType(), "ITD02 Value");
 					}
-					if(element[1].equals("02") || element[1].equals("12")) {
+					if (element[1].equals("02") || element[1].equals("12")) {
 						if (element[4].isEmpty() || element[5].isEmpty() || element[6].isEmpty() || element[7].isEmpty()
 								|| element[13].isEmpty()) {
 							message += error.getErrorMessage(getTransactionType(), "ITD Req Empty");
@@ -1202,7 +1203,7 @@ public class Dsco extends EDI {
 						if (!element[8].matches(decimalPattern)) {
 							message += error.getErrorMessage(getTransactionType(), "ITD08 Value");
 						}
-					}	
+					}
 
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
@@ -1478,6 +1479,149 @@ public class Dsco extends EDI {
 
 		}
 		errorInformation.add(error.evaluateReqFields(fields));
+	}
+
+	private void dsco870(ArrayList<String> transactionData, String elementSeparator) {
+
+		String holder = "";
+		String[] element;
+		String message = "";
+		String dateFormat = "yyyyMMdd";
+		String timeFormat = "HHmm";
+
+		HashMap<String, Boolean> fields = getRequiredFields();
+
+		String transactionSetControlHeader = "";
+
+		for (int i = 0; i < transactionData.size(); i++) {
+			// assign the array element to holder
+			holder = transactionData.get(i);
+			holder = holder.trim();
+			// remove whitespace from beginning and end of the string
+
+			// split holder into the element array. So we can evaluate each segment of the
+			// EDI
+			element = holder.split(elementSeparator);
+			// element[0] = element[0].trim();
+			// if(elementSeparator != "/n") {
+			// element[0] = element[0].replaceAll("/n", "");
+			// }
+			switch (element[0]) {
+			case "ST":
+				fields.put("ST", true);
+				if (element.length != 3) {
+					message += error.getErrorMessage("General", "ST Size");
+					break;
+				}
+				// if the ST02 element isn't empty check the length of the data in that element.
+				if (!element[2].isEmpty()) {
+					if (element[2].length() > 9) {
+						message += error.getErrorMessage("General", "ST02 Size");
+					}
+				}
+				// check to see if ST02 is empty if it is pull an error
+				if (element[2].isEmpty()) {
+					message += error.getErrorMessage("General", "ST02 empty");
+				}
+				// if it isn't empty store the value in the ST02 in the
+				// transactionSetControlHeader variable for later comparison
+				else {
+					transactionSetControlHeader += element[2];
+				}
+				// add the data with any errors to the errorInformation ArrayList
+				errorInformation.add(holder + message);
+				// set message to blank to be ready for the next set of errors
+				message = "";
+				// get out of the loop so we can move on to the next segment in the EDI
+				break;
+
+			case "BSR":
+				try {
+					fields.put("BSR", true);
+
+					if (element.length != 5) {
+						message += error.getErrorMessage(getTransactionType(), "BSR Size");
+					}
+					if (!element[1].equals("2")) {
+						message += error.getErrorMessage(getTransactionType(), "BSR01 Value");
+					}
+					if (!element[2].equals("PP")) {
+						message += error.getErrorMessage(getTransactionType(), "BSR02 Value");
+					}
+					if (element[3].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "BSR03 Empty");
+					}
+					if (!EDI_Filter.dateChecker(element[4], dateFormat)) {
+						message += error.getErrorMessage(getTransactionType(), "BSR04 Format");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "HL":
+				fields.put("HL", true);
+				
+				try {
+					if (element.length != 4) {
+						message += error.getErrorMessage(getTransactionType(), "HL Size");
+					}
+					if (element[1].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "HL01 Empty");
+					}
+					if (element[2].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "HL02 Empty");
+					}
+					if (!element[3].equals("O") && !element[3].equals("I")) {
+						message += error.getErrorMessage(getTransactionType(), "HL03 Value");
+					}
+					if(element[2].StringUtils.IsNumeric()) {
+						
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+
+			case "PRF":
+				fields.put("PRF", true);
+
+				try {
+					if (element.length != 2) {
+						message += error.getErrorMessage(getTransactionType(), "PRF Size");
+					}
+					if (element[1].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "PRF01 Empty");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+			case "REF":
+				try {
+									
+					if (element.length < 3 && element.length > 4) {
+						message += error.getErrorMessage(getTransactionType(), "REF Size");
+					}
+					if(!element[1].equals("IA") && !element[1].equals("CO") && !element[1].equals("VN")) {
+						message += error.getErrorMessage(getTransactionType(), "REF01 Value");
+					}
+					if(element[2].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "REF02 Empty");
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+			}
+		}
+
 	}
 
 }

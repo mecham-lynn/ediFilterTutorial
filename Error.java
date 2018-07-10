@@ -14,16 +14,18 @@ public class Error {
 			return ShipErrors(errorParams);
 		case "810":
 			return InvoiceErrors(errorParams);
+		case "870":
+			return CancelErrors(errorParams);
 		case "General":
 			return GenErrors(errorParams);
-			default:
-				return "";
+		default:
+			return "";
 		}
 	}
-	
+
 	private String InvoiceErrors(String errorParams) {
-		switch(errorParams) {
-		// Messages for BIG 
+		switch (errorParams) {
+		// Messages for BIG
 		case "BIG Size":
 			return "-- The length of this segment is incorrect it should be 4 elements long--";
 		case "BIG Req Empty":
@@ -32,16 +34,16 @@ public class Error {
 			return "-- The date format for BIG01 is incorrect it must be in the CCYYMMDD format --";
 		case "BIG03 Format":
 			return "-- The date format for BIG03 is incorrect it must be in the CCYYMMDD format --";
-		
-			// Messages for CUR 
+
+		// Messages for CUR
 		case "CUR Size":
 			return "-- The length of this segment is incorrect it should be 2 elements long --";
 		case "CUR01 Value":
 			return "-- The value of the CUR01 segment is incorrect it should be 'BY' --";
 		case "CUR02 Vlaue":
 			return "-- The value of hte CUR02 segment is incorrect it should be 'USD' --";
-		
-			// Messages for REF 
+
+		// Messages for REF
 		case "REF Size":
 			return "-- The length of this segment is incorrect it should be 2 or 3 elements long --";
 		case "REF01 Value":
@@ -58,23 +60,22 @@ public class Error {
 			return "-- The value in the REF02 is incorrect it must be either 'BM' or 'CN' when the REF03 is ship_reference_number_qualifier --";
 		case "REF Decimal":
 			return "-- The value in the REF02 is incorrect it should be a decimal number --";
-		
-			// Messages for N1 
+
+		// Messages for N1
 		case "N101 Value":
-			return" -- The value of the N101 element is incorrect, it should be 'ST' or 'SF' --";
+			return " -- The value of the N101 element is incorrect, it should be 'ST' or 'SF' --";
 		case "N1 Size":
 			return "-- The length of the N1 segment is incorrect it hsould be 2 elements long --";
-			
-			
-			// Messages for N3
+
+		// Messages for N3
 		case "N3 Size":
 			return "-- The length of the N3 segment is incorrect it should be 2 elements long --";
-		
+
 		// Messages for N4
 		case "N4 Size":
 			return "-- The length of the N4 segment is incorrect it should be 4 elements long --";
-		
-			// Messages for ITD
+
+		// Messages for ITD
 		case "ITD Size":
 			return "-- The length of the ITD segment is incorrect it should be 13 elements long --";
 		case "ITD01 Value":
@@ -87,16 +88,16 @@ public class Error {
 			return "-- The value in the ITD08 is incorrect it must be a decimal number --";
 		case "ITD09-12 Populated":
 			return "-- One of the elements in the range ITD09-12 is populated when they are supposed to be empty --";
-		
-			// Messages for DTM
+
+		// Messages for DTM
 		case "DTM Size":
 			return "-- The length of the DTM segment is incorrect it should be 3 elements long --";
 		case "DTM02 Format":
 			return "-- The format of the data in the DTM02 element is incorrect it should match CCYYMMDD --";
 		case "DTM03 Format":
 			return "-- The format of the data in the DTM03 element is incorrect it should match HHMM --";
-		
-			// Messages for IT1
+
+		// Messages for IT1
 		case "IT1 Size":
 			return "-- The length of the IT1 segment is incorrect it needs to be between 7 and 19 elements long --";
 		case "IT1 Req Empty":
@@ -106,7 +107,7 @@ public class Error {
 		case "IT104 Value":
 			return "-- The value in the IT104 element is incorrect, it should be a decimal number --";
 		case "IT105 Value":
-			return"-- The value in the IT105 element is incorrect, it should be either 'QT' or 'LE' --";
+			return "-- The value in the IT105 element is incorrect, it should be either 'QT' or 'LE' --";
 		case "IT106 Value":
 			return "-- The value in the IT106 element is incorrect, it should be 'SK' --";
 		case "IT107 SKU Length":
@@ -139,8 +140,8 @@ public class Error {
 			return "-- The value in the IT118 element is incorrect it should be 'ZZ' --";
 		case "IT119 Empty":
 			return "-- When the IT116 is provided the IT117 cannot be empty";
-		
-			// Messages for TDS
+
+		// Messages for TDS
 		case "TDS01 Empty":
 			return "-- TDS01 is a required field and cannot be empty --";
 		case "TDS Size":
@@ -149,15 +150,14 @@ public class Error {
 			return "-- The TDS01 value is incorrect it must be a decimal value --";
 		case "TDS02 Value":
 			return "-- The TDS02 value is incorrect it must be a decimal value --";
-		
-			// Messages for AMT
+
+		// Messages for AMT
 		case "AMT01 Value":
 			return "-- The AMT01 value is incorrect it should be either 'OH' or 'F7' --";
 		case "AMT02 Value":
-			return"-- The AMT02 Value is incorrect it should be a decimal value --";
-		
-		
-			// Messages for SAC
+			return "-- The AMT02 Value is incorrect it should be a decimal value --";
+
+		// Messages for SAC
 		case "SAC Size":
 			return "-- The length of the SAC segment is incorrect it should be 5 elements long --";
 		case "SAC01 Value":
@@ -168,9 +168,8 @@ public class Error {
 			return "-- Elements SAC03 and SAC04 are required to be empty --";
 		case "SAC05 Value":
 			return "-- The value of SAC05 is incorrect it should be a decimal character --";
-		
-		
-			// Messages for ISS
+
+		// Messages for ISS
 		case "ISS Size":
 			return "-- The length of the ISS segment is incorrect it should be 4 elements long --";
 		case "ISS01 Empty":
@@ -181,32 +180,30 @@ public class Error {
 			return "-- The ISS03 is empty, when the ISS segment is included the ISS03 is needed --";
 		case "ISS04 Value":
 			return "-- The ISS04 value is incorrect it should be one of the following: 'LB', 'OZ', '50' --";
-		
-			// Messages for CTT 
+
+		// Messages for CTT
 		case "CTT Size":
 			return "-- The length of the CTT segment is incorrect it needs to be 1 element long --";
 		case "CTT01 Value":
 			return " -- The value of the CTT01 segment is incorrect it should be equal to the number of lin-items in the transaction --";
-			
+
 		default:
 			return "";
-			
-			
-		} 
+
+		}
 	}
 
 	public String evaluateReqFields(HashMap<String, Boolean> reqFields) {
 		String Message = "";
 		Iterator<Map.Entry<String, Boolean>> entries = reqFields.entrySet().iterator();
-		while(entries.hasNext()) {
+		while (entries.hasNext()) {
 			Map.Entry<String, Boolean> entry = entries.next();
-			if(entry.getValue() == false) {
+			if (entry.getValue() == false) {
 				Message += "Required Segment " + entry.getKey() + " was not provided.";
 			}
 		}
 		return Message;
-		
-		
+
 	}
 
 	private String ShipErrors(String errorParams) {
@@ -290,13 +287,13 @@ public class Error {
 		case "PRF Size":
 			return "-- The segment length of the PRF value is incorrect it should be 1 element long --";
 		case "PRF01 Empty":
-			return "-- The PRF01 segment is empty, the PRF01 segment is a required segment and cannot be missing --"; 
-		
+			return "-- The PRF01 segment is empty, the PRF01 segment is a required segment and cannot be missing --";
+
 		default:
 			return "";
 		}
 	}
-	
+
 	private String GenErrors(String errorParams) {
 		switch (errorParams) {
 
@@ -465,6 +462,50 @@ public class Error {
 		default:
 			return "";
 
+		}
+
+	}
+
+	private String CancelErrors(String errorParams) {
+		switch (errorParams) {
+		
+		//Params for BSR segment Errors
+		case "BSR Size":
+			return "-- The length of the BSR element is incorrect it should be 4 elements long --";
+		case "BSR01 Value":
+			return "-- The value in the BSR01 element is incorrect it shoudl be '2' --";
+		case "BSR02 Value":
+			return "-- The value in the BSR02 element is incorrect is should be 'PP' --";
+		case "BSR03 Empty":
+			return "-- The BSR03 Value is a required field and cannot be empty --";
+		case "BSR04 Format":
+			return "-- The BSR04 Value is in the incorrect format it needs to be in the CCYYMMDD format --";
+			
+		case "HL Size":
+			return "-- The length of the HL segment is incorrect it needs to be 3 elements long --";
+		case "HL01 Empty":
+			return "-- The HL01 segment is empty--";
+		case "HL02 Empty":
+			return "-- The HL02 segment is empty--";
+		case "HL03 Value":
+			return "-- The value in the HL03 element is incorrect it should be: 'I' or 'O' --";
+		
+		
+		//Params for PRF segment Errors
+		case "PRF Size":
+			return "-- The length of the PRF segment is incorrect it shoudl be 1 element long--";
+		case "PRF01 Empty":
+			return "-- The PRF01 element is Empty --";
+			
+		//Params for REF segment Errors
+		case "REF Size":
+			return "-- The length of the REF segment is incorrect it should be either 2 or 3 elements long--";
+		case "REF01 Value":
+			return "-- The value in the REF01 is incorrect it needs to be one of the following: 'VN', 'CO', 'IA'--";
+		case "REF02 Empty":
+			return "-- The REF02 segment is empty --";
+		default:
+			return "";
 		}
 	}
 }

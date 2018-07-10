@@ -38,11 +38,25 @@ public class EDI {
 	private HashMap<String, Boolean> Dsco856 = new HashMap<String, Boolean>();
 	private HashMap<String, Boolean> Dsco846 = new HashMap<String, Boolean>();
 	private HashMap<String, Boolean> Dsco810 = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> Dsco870 = new HashMap<String, Boolean>();
 	
 //	public void clearEDIData() {
 //		EDI_Data.clear();
 //		ediFile = null;
 //	}
+	
+	public void createFieldsDsco870() {
+		Dsco870.put("ST", false);
+		Dsco870.put("BSR", false);
+		Dsco870.put("HL", false);
+		Dsco870.put("PRF", false);
+		Dsco870.put("PO1", false);
+		Dsco870.put("ISR", false);
+		Dsco870.put("SE", false);
+		
+		setRequiredFields(Dsco870);
+	}
+	
 	
 	public void createFieldsDsco810() {
 		Dsco810.put("ST", false);
