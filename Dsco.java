@@ -1,6 +1,8 @@
 package ediFilterTutorial;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1577,8 +1579,8 @@ public class Dsco extends EDI {
 					if (!element[3].equals("O") && !element[3].equals("I")) {
 						message += error.getErrorMessage(getTransactionType(), "HL03 Value");
 					}
-					if(element[2].StringUtils.IsNumeric()) {
-						
+					if(!isNumber(element[2])) {
+						message += error.getErrorMessage(getTransactionType(), "HL02 Value");
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
@@ -1622,6 +1624,16 @@ public class Dsco extends EDI {
 			}
 		}
 
+	}
+	private boolean isNumber(String value) {
+		NumberFormat formatter = NumberFormat.getInstance();
+		ParsePosition pos = new ParsePosition(0);
+		formatter.parse(value, pos);
+		if(value.length() == pos.getIndex()) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 }

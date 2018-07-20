@@ -506,6 +506,8 @@ public class Error {
 			return "-- The REF02 segment is empty --";
 		default:
 			return "";
+			
+			//
 		}
 	}
 }
