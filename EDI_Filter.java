@@ -180,10 +180,16 @@ public class EDI_Filter extends EDI implements ActionListener {
 		String segmentTerminator = "";
 		String elementSeparator = "";
 
+		if (delimeter == '*' || delimeter =='|' || delimeter =='.' || delimeter =='^' || delimeter == '$' || delimeter =='?' || delimeter =='+') {
+			segmentTerminator = "\\" + String.valueOf(delimeter);
+		} else {
+			segmentTerminator = String.valueOf(delimeter);
+		}
+
 		segmentTerminator = String.valueOf(delimeter);
 // if the value in separate is an '*' character we will need to add some escape characters to the front of it so it will work this is because the regex in the split method uses the * for a different function 
-		if (separate == '*') {
-			elementSeparator = "\\*";
+		if (separate == '*' || separate =='|' || separate =='.' || separate =='^' || separate == '$' || separate =='?' || separate =='+') {
+			elementSeparator = "\\" + String.valueOf(separate);
 		} else {
 			elementSeparator = String.valueOf(separate);
 		}
