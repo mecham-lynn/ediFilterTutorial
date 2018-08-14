@@ -365,14 +365,14 @@ public class Error {
 			return " -- The LIN02 segment has to be 'SK'--- ";
 		case "LIN03 Size":
 			return " -- The LIN03 segment cannot be longer than 70 characters--- ";
-		case "LIN04 Value":
-			return " -- LIN04 segment has to be 'UP--- ";
-		case "LIN05 Size":
-			return " --The UPC needs to be 6 or 12 characters long--- ";
 		case "LIN02 Req":
 			return " --LIN02 is required and cannot be empty--- ";
 		case "LIN03 Req":
 			return " --LIN03 is required and cannot be empty--- ";
+		case "LIN04 Value":
+			return " -- LIN04 segment has to be 'UP--- ";
+		case "LIN05 Size":
+			return " --The UPC needs to be 6 or 12 characters long--- ";
 		case "LIN06 Value":
 			return " --LIN06 must be 'EN'--- ";
 		case "LIN07 Size":
@@ -426,7 +426,7 @@ public class Error {
 
 		// Params for QTY error messages
 		case "QTY Size":
-			return " ---The QTY segment size is incorrect it must be 3 segments long --- ";
+			return " --- The QTY segment size is incorrect it must be 3 elements long --- ";
 		case "QTY Empty":
 			return "-- The QTY segment is required. None of the segments can be blank --- ";
 		case "QTY01 Value":
@@ -471,9 +471,9 @@ public class Error {
 		
 		//Params for BSR segment Errors
 		case "BSR Size":
-			return "-- The length of the BSR element is incorrect it should be 4 elements long --";
+			return "-- The length of the BSR segment is incorrect it should be 4 elements long --";
 		case "BSR01 Value":
-			return "-- The value in the BSR01 element is incorrect it shoudl be '2' --";
+			return "-- The value in the BSR01 element is incorrect it should be '2' --";
 		case "BSR02 Value":
 			return "-- The value in the BSR02 element is incorrect is should be 'PP' --";
 		case "BSR03 Empty":
