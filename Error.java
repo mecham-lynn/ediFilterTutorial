@@ -504,6 +504,45 @@ public class Error {
 			return "-- The value in the REF01 is incorrect it needs to be one of the following: 'VN', 'CO', 'IA'--";
 		case "REF02 Empty":
 			return "-- The REF02 segment is empty --";
+			
+			//Params for PO1 segment
+		case "PO1 Req Empty":
+			return "-- One of the following fields are empty and cannot be: PO101, PO102, PO103, PO104, PO106, PO107 --";
+		case "PO101 Value":
+			return "-- The value in the PO101 is incorrect it needs to be greater than 0 --";
+		case "PO102 Value":
+			return "-- The value in the PO102 is incorrect it needs to be greater than 0 --";
+		case "PO103 Value":
+			return "-- The value in the PO103 is incorrect it needs to be 'EN' --";
+		case "PO104 Value":
+			return "-- The value in the PO104 didn't have a decimal, a decimal place has to be included in the PO104 --";
+		case "PO105 Not Empty":
+			return "-- The PO105 is not empty. The PO105 has to be empty --";
+		case "PO106 Value":
+			return "-- The PO106 is incorrect, it needs to be 'SK' --";
+		case "PO107 Length":
+			return "-- The PO107 value is too long, it needs to be under 70 characters long --";
+		case "PO108 Value":
+			return "-- The value in the PO108 is incorrect it needs to be 'UP' --";
+		case "PO109 Length":
+			return "-- The length of the UPC in the PO109 is incorrect it needs to be 6 or 12 characters long --";
+		case "PO109 Number":
+			return "-- The value in the PO109 is incorrect it cannot contain any letters --";
+		case "PO109 Empty":
+			return "-- The PO109 element is empty. The PO109 element cannot be empty when the PO108 element is provided --";
+		case "PO110 Value":
+			return "-- The value in the PO110 is incorrect it needs to be 'EN' --";
+		case "PO111 Empty":
+			return "-- The PO111 element is empty. The PO111 element cannot be empty when the PO110 element is provided --";
+		case "PO111 Length":
+			return "-- the length of the EAN in the PO111 element is incorrect it needs to be 13 characeters long --";
+		case "PO111 Number":
+			return "-- The value in the PO111 is incorrect it cannot contain any letters --";
+		case "PO112 Value":
+			return "-- The value in the PO112 element is incorrect it needs to be 'MG' --";
+		case "PO113 Nubmer":
+			return "-- The value in the PO113 element is incorrect it needs to be 'ZZ' --";
+			
 		default:
 			return "";
 			

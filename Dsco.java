@@ -1621,10 +1621,72 @@ public class Dsco extends EDI {
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
+			case "PO1":
+				try {
+					if(element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty() || element[4].isEmpty() || element[6].isEmpty() || element[7].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "PO1 Req Empty");
+					}
+					else {
+						if(convertToNumber(element[1]) < 1) {
+							message += error.getErrorMessage(getTransactionType(), "PO101 Value");
+						}
+						if(convertToNumber(element[2]) < 1) {
+							message += error.getErrorMessage(getTransactionType(), "PO102 Value");
+						}
+						if(!element[3].equals("EA")) {
+							message += error.getErrorMessage(getTransactionType(), "PO103 Value");
+						}
+						if (!element[4].matches(decimalPattern)) {
+							message += error.getErrorMessage(getTransactionType(), "PO104 Decimal");
+						}
+						if (!element[5].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "PO105 Not Empty");
+						}
+						if(!element[6].equals("SK")) {
+							message += error.getErrorMessage(getTransactionType(), "PO106 Value");
+						}
+						if(element[7].length() > 70) {
+							message += error.getErrorMessage(getTransactionType(), "PO107 Length");
+						}
+						if(!element[8].equals("UP")) {
+							message += error.getErrorMessage(getTransactionType(), "PO108 Value");
+						}
+						if(!element[8].isEmpty() && element[9].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "PO109 Empty");
+						}
+						if(element[9].length() != 6 && element[9].length() != 12) {
+							message += error.getErrorMessage(getTransactionType(), "PO109 Length");
+						}if(!isNumber(element[9])) {
+							message += error.getErrorMessage(getTransactionType(), "PO109 Number");
+						}
+						if(!element[10].equals("EN")) {
+							message += error.getErrorMessage(getTransactionType(), "PO110 Value");
+						}
+						if(!element[10].isEmpty() && element[11].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "PO111 Empty");
+						}
+						if(element[11].length() != 13) {
+							message += error.getErrorMessage(getTransactionType(), "PO111 Length");
+						}if(!isNumber(element[11])) {
+							message += error.getErrorMessage(getTransactionType(), "PO111 Number");
+						}if(!element[12].equals("MG")) {
+							message += error.getErrorMessage(getTransactionType(), "PO112 Value");
+						}
+					}
+					
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
 			}
 		}
 
 	}
+	
+	private int convertToNumber(String value) {
+		int number = Integer.parseInt(value);
+		return number;
+	}
+	
 	private boolean isNumber(String value) {
 		NumberFormat formatter = NumberFormat.getInstance();
 		ParsePosition pos = new ParsePosition(0);
