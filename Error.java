@@ -540,8 +540,10 @@ public class Error {
 			return "-- The value in the PO111 is incorrect it cannot contain any letters --";
 		case "PO112 Value":
 			return "-- The value in the PO112 element is incorrect it needs to be 'MG' --";
-		case "PO113 Nubmer":
-			return "-- The value in the PO113 element is incorrect it needs to be 'ZZ' --";
+		case "PO113 Value":
+			return "-- The PO113 element is empty. The PO113 element cannot be empty when the PO112 element is provided --";
+		case "PO114 Value":
+			return" -- The value in the PO114 element is incorrect it needs to be 'ZZ' --";
 			
 		default:
 			return "";

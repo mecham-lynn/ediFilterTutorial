@@ -1648,7 +1648,7 @@ public class Dsco extends EDI {
 						if(element[7].length() > 70) {
 							message += error.getErrorMessage(getTransactionType(), "PO107 Length");
 						}
-						if(!element[8].equals("UP")) {
+						if(!element[8].isEmpty() && !element[8].equals("UP")) {
 							message += error.getErrorMessage(getTransactionType(), "PO108 Value");
 						}
 						if(!element[8].isEmpty() && element[9].isEmpty()) {
@@ -1671,6 +1671,10 @@ public class Dsco extends EDI {
 							message += error.getErrorMessage(getTransactionType(), "PO111 Number");
 						}if(!element[12].equals("MG")) {
 							message += error.getErrorMessage(getTransactionType(), "PO112 Value");
+						}if(!element[12].isEmpty() && !element[13].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "PO113 Value");
+						}if(!element[12].isEmpty() && !element[14].isEmpty()) {
+							message += error.getErrorMessage(getTransactionType(), "PO114 Value");
 						}
 					}
 					
