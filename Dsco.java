@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 public class Dsco extends EDI {
 	Error error = new Error();
 	Printer printer;
@@ -1490,6 +1489,7 @@ public class Dsco extends EDI {
 		String message = "";
 		String dateFormat = "yyyyMMdd";
 		String timeFormat = "HHmm";
+		int size = transactionData.size();
 
 		HashMap<String, Boolean> fields = getRequiredFields();
 
@@ -1565,7 +1565,7 @@ public class Dsco extends EDI {
 
 			case "HL":
 				fields.put("HL", true);
-				
+
 				try {
 					if (element.length != 4) {
 						message += error.getErrorMessage(getTransactionType(), "HL Size");
@@ -1579,7 +1579,7 @@ public class Dsco extends EDI {
 					if (!element[3].equals("O") && !element[3].equals("I")) {
 						message += error.getErrorMessage(getTransactionType(), "HL03 Value");
 					}
-					if(!isNumber(element[2])) {
+					if (!isNumber(element[2])) {
 						message += error.getErrorMessage(getTransactionType(), "HL02 Value");
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -1607,33 +1607,37 @@ public class Dsco extends EDI {
 				break;
 			case "REF":
 				try {
-									
+
 					if (element.length < 3 && element.length > 4) {
 						message += error.getErrorMessage(getTransactionType(), "REF Size");
 					}
-					if(!element[1].equals("IA") && !element[1].equals("CO") && !element[1].equals("VN")) {
+					if (!element[1].equals("IA") && !element[1].equals("CO") && !element[1].equals("VN")) {
 						message += error.getErrorMessage(getTransactionType(), "REF01 Value");
 					}
-					if(element[2].isEmpty()) {
+					if (element[2].isEmpty()) {
 						message += error.getErrorMessage(getTransactionType(), "REF02 Empty");
 					}
 
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
 			case "PO1":
+				fields.put("PO1", true);
 				try {
-					if(element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty() || element[4].isEmpty() || element[6].isEmpty() || element[7].isEmpty()) {
+					if (element[1].isEmpty() || element[2].isEmpty() || element[3].isEmpty() || element[4].isEmpty()
+							|| element[6].isEmpty() || element[7].isEmpty()) {
 						message += error.getErrorMessage(getTransactionType(), "PO1 Req Empty");
-					}
-					else {
-						if(convertToNumber(element[1]) < 1) {
+					} else {
+						if (convertToNumber(element[1]) < 1) {
 							message += error.getErrorMessage(getTransactionType(), "PO101 Value");
 						}
-						if(convertToNumber(element[2]) < 1) {
+						if (convertToNumber(element[2]) < 1) {
 							message += error.getErrorMessage(getTransactionType(), "PO102 Value");
 						}
-						if(!element[3].equals("EA")) {
+						if (!element[3].equals("EA")) {
 							message += error.getErrorMessage(getTransactionType(), "PO103 Value");
 						}
 						if (!element[4].matches(decimalPattern)) {
@@ -1642,62 +1646,148 @@ public class Dsco extends EDI {
 						if (!element[5].isEmpty()) {
 							message += error.getErrorMessage(getTransactionType(), "PO105 Not Empty");
 						}
-						if(!element[6].equals("SK")) {
+						if (!element[6].equals("SK")) {
 							message += error.getErrorMessage(getTransactionType(), "PO106 Value");
 						}
-						if(element[7].length() > 70) {
+						if (element[7].length() > 70) {
 							message += error.getErrorMessage(getTransactionType(), "PO107 Length");
 						}
-						if(!element[8].isEmpty() && !element[8].equals("UP")) {
+						if (!element[8].isEmpty() && !element[8].equals("UP")) {
 							message += error.getErrorMessage(getTransactionType(), "PO108 Value");
 						}
-						if(!element[8].isEmpty() && element[9].isEmpty()) {
+						if (!element[8].isEmpty() && element[9].isEmpty()) {
 							message += error.getErrorMessage(getTransactionType(), "PO109 Empty");
 						}
-						if(element[9].length() != 6 && element[9].length() != 12) {
+						if (element[9].length() != 6 && element[9].length() != 12) {
 							message += error.getErrorMessage(getTransactionType(), "PO109 Length");
-						}if(!isNumber(element[9])) {
+						}
+						if (!isNumber(element[9])) {
 							message += error.getErrorMessage(getTransactionType(), "PO109 Number");
 						}
-						if(!element[10].equals("EN")) {
+						if (!element[10].equals("EN")) {
 							message += error.getErrorMessage(getTransactionType(), "PO110 Value");
 						}
-						if(!element[10].isEmpty() && element[11].isEmpty()) {
+						if (!element[10].isEmpty() && element[11].isEmpty()) {
 							message += error.getErrorMessage(getTransactionType(), "PO111 Empty");
 						}
-						if(element[11].length() != 13) {
+						if (element[11].length() != 13) {
 							message += error.getErrorMessage(getTransactionType(), "PO111 Length");
-						}if(!isNumber(element[11])) {
+						}
+						if (!isNumber(element[11])) {
 							message += error.getErrorMessage(getTransactionType(), "PO111 Number");
-						}if(!element[12].equals("MG")) {
+						}
+						if (!element[12].equals("MG")) {
 							message += error.getErrorMessage(getTransactionType(), "PO112 Value");
-						}if(!element[12].isEmpty() && !element[13].isEmpty()) {
+						}
+						if (!element[12].isEmpty() && element[13].isEmpty()) {
 							message += error.getErrorMessage(getTransactionType(), "PO113 Value");
-						}if(!element[12].isEmpty() && !element[14].isEmpty()) {
+						}
+						if (!element[14].isEmpty() && !element[14].equals("ZZ")) {
 							message += error.getErrorMessage(getTransactionType(), "PO114 Value");
 						}
+						if (!element[15].isEmpty() && element[15].equals("dsco_item_id")) {
+							message += error.getErrorMessage(getTransactionType(), "PO115 Value");
+						}
+						if (!element[16].isEmpty() && !element[16].equals("ZZ")) {
+							message += error.getErrorMessage(getTransactionType(), "PO116 Value");
+						}
+						if (!element[18].isEmpty() && !element[18].equals("ZZ")) {
+							message += error.getErrorMessage(getTransactionType(), "PO118 Value");
+						}
 					}
-					
+
 				} catch (ArrayIndexOutOfBoundsException e) {
 					message += error.getErrorMessage("General", "ArrayBoundsError");
 				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+			case "ISR":
+				fields.put("ISR", true);
+				try {
+					if (element.length != 2) {
+						message += error.getErrorMessage(getTransactionType(), "ISR Size");
+					}
+					if (!element[1].equals("IC") || element[1].isEmpty()) {
+						message += error.getErrorMessage(getTransactionType(), "ISR01 Value");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					message += error.getErrorMessage("General", "ArrayBoundsError");
+				}
+				errorInformation.add(holder + message);
+				message = "";
+				break;
+			case "SE":
+//				try {
+//					fields.put("SE", true);
+//					int result;
+//					String count = "";
+//					count += element[1];
+//					result = Integer.parseInt(count);
+//					if (element.length != 3) {
+//						message += error.getErrorMessage("General", "SE Size");
+//					}
+//					if (element[1].isEmpty()) {
+//						message += error.getErrorMessage("General", "SE01 Empty");
+//						break;
+//					}
+//					if (result != transactionData.size()) {
+//						message += error.getErrorMessage("General", "SE01 Value");
+//					}
+//					if (!element[2].equals(transactionSetControlHeader)) {
+//						message += error.getErrorMessage("General", "SE02 Value");
+//					}
+//				} catch (ArrayIndexOutOfBoundsException e) {
+//					message += error.getErrorMessage("General", "ArrayBoundsError");
+//				}
+				errorInformation.add(holder + transactionTrailerValidation(element,size,fields,transactionSetControlHeader));
+				break;
 			}
-		}
 
+		}
+		errorInformation.add(error.evaluateReqFields(fields));
 	}
-	
+
+	private String transactionTrailerValidation(String[] element, int size,
+			HashMap<String, Boolean> fields, String transactionSetControlHeader) {
+		String message = "";
+		try {
+			fields.put("SE", true);
+			int result = convertToNumber(element[1]);
+//			String count = "";
+//			count += element[1];
+//			result = Integer.parseInt(count);
+			if (element.length != 3) {
+				message += error.getErrorMessage("General", "SE Size");
+			}
+			if (element[1].isEmpty()) {
+				message += error.getErrorMessage("General", "SE01 Empty");
+			}
+			if (result != size) {
+				message += error.getErrorMessage("General", "SE01 Value");
+			}
+			if (!element[2].equals(transactionSetControlHeader)) {
+				message += error.getErrorMessage("General", "SE02 Value");
+			}
+			return message;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			message += error.getErrorMessage("General", "ArrayBoundsError");
+			return message;
+		}
+	}
+
 	private int convertToNumber(String value) {
 		int number = Integer.parseInt(value);
 		return number;
 	}
-	
+
 	private boolean isNumber(String value) {
 		NumberFormat formatter = NumberFormat.getInstance();
 		ParsePosition pos = new ParsePosition(0);
 		formatter.parse(value, pos);
-		if(value.length() == pos.getIndex()) {
+		if (value.length() == pos.getIndex()) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}

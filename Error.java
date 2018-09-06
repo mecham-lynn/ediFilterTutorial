@@ -477,16 +477,16 @@ public class Error {
 		case "BSR02 Value":
 			return "-- The value in the BSR02 element is incorrect is should be 'PP' --";
 		case "BSR03 Empty":
-			return "-- The BSR03 Value is a required field and cannot be empty --";
+			return "-- The BSR03 element is a required field and cannot be empty --";
 		case "BSR04 Format":
-			return "-- The BSR04 Value is in the incorrect format it needs to be in the CCYYMMDD format --";
+			return "-- The BSR04 element is in the incorrect format it needs to be in the CCYYMMDD format --";
 			
 		case "HL Size":
 			return "-- The length of the HL segment is incorrect it needs to be 3 elements long --";
 		case "HL01 Empty":
-			return "-- The HL01 segment is empty--";
+			return "-- The HL01 element is empty--";
 		case "HL02 Empty":
-			return "-- The HL02 segment is empty--";
+			return "-- The HL02 element is empty--";
 		case "HL03 Value":
 			return "-- The value in the HL03 element is incorrect it should be: 'I' or 'O' --";
 		
@@ -544,6 +544,18 @@ public class Error {
 			return "-- The PO113 element is empty. The PO113 element cannot be empty when the PO112 element is provided --";
 		case "PO114 Value":
 			return" -- The value in the PO114 element is incorrect it needs to be 'ZZ' --";
+		case "PO115 Value":
+			return "-- The value in the PO115 element is incorrect it needs to be 'dsco_item_id' --";
+		case "PO116 Value":
+			return" -- The value in the PO116 element is incorrect it needs to be 'ZZ' --";
+		case "PO118 Value":
+			return "-- The value in the PO118 element is incorrect it needs to be 'ZZ' --";
+			
+		// Params for the ISR segment
+		case "ISR Size":
+			return "-- The length of the ISR is incorrect it needs to be one element long --";
+		case "ISR01 Value":
+			return"-- The value of the ISR01 element is incorrect it needs to be 'IC' --";
 			
 		default:
 			return "";
